@@ -216,8 +216,4 @@ class Cube:
         for m in moves:
             self.__move(m)
         return
-    
-c = Cube()
-c.print()
-c.doMoves("RUR'U'")
-c.print()
+
