@@ -9,7 +9,88 @@ def getScramble(length):
             scr += '\''
     return condenseFormula(scr)
 
-def condenseFormula(form):
+def condenseFormula(form, advanced=True):
+    if(not advanced):
+        return rawCondense(form)
+    if(not isValid(form)):
+        return "ERROR"
+    ans = ""
+    tmp = ""
+    for ch in form:
+        if(ch == '(' or ch == ')'):
+            if(len(tmp) > 0):
+                ans += rawCondense(tmp)
+            tmp = ""
+            ans += ch
+        else:
+            tmp += ch
+    if(len(tmp) > 0):
+        ans += rawCondense(tmp)
+    maxlevel = getMaxLevel(ans)
+    for level in range(1, maxlevel + 1):
+        ans = parCondense(ans, level)
+    return ans
+
+def isValid(form):
+    level = 0
+    valid = True
+    for ch in form:
+        if(ch == '('):
+            level += 1
+        elif(ch == ')'):
+            if(level > 0):
+                level -= 1
+            else:
+                valid = False
+    if(level != 0):
+        valid = False
+    return valid
+
+def getMaxLevel(form):
+    level = 0
+    maxlevel = 0
+    for ch in form:
+        if(ch == '('):
+            level += 1
+            if(level > maxlevel):
+                maxlevel = level
+        elif(ch == ')'):
+            level -= 1
+    return maxlevel
+
+def parCondense(form, tar):
+    form += '@'
+    ans = ""
+    temp = ""
+    ref = ""
+    refctr = 0
+    ctr = 0
+    for i in range(len(form)):
+        if(form[i] == '('):
+            ctr += 1
+        if(ctr >= tar):
+            temp += form[i]
+        else:
+            if(len(ref) > 0):
+                ans += ref
+                ans += str(refctr) if refctr > 1 else ""
+                ref = ""
+                refctr = 0
+            ans += form[i]
+        if(form[i] == ')'):
+            if(ctr == tar):
+                if(temp == ref):
+                    refctr += 1
+                else:
+                    ans += ref
+                    ans += str(refctr) if refctr > 1 else ""
+                    ref = temp
+                    refctr = 1
+                temp = ""
+            ctr -= 1
+    return ans[:-1]
+
+def rawCondense(form):
     # string to array
     temp = []
     for i in range(len(form)):
