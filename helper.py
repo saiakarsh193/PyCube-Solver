@@ -10,10 +10,10 @@ def getScramble(length):
     return condenseFormula(scr)
 
 def condenseFormula(form, advanced=True):
-    if(not advanced):
-        return rawCondense(form)
     if(not isValid(form)):
         return "ERROR"
+    if(not advanced):
+        return rawCondense(form)
     ans = ""
     tmp = ""
     for ch in form:
@@ -27,7 +27,7 @@ def condenseFormula(form, advanced=True):
     if(len(tmp) > 0):
         ans += rawCondense(tmp)
     maxlevel = getMaxLevel(ans)
-    for level in range(1, maxlevel + 1):
+    for level in range(maxlevel, 0, -1):
         ans = parCondense(ans, level)
     return ans
 
@@ -41,13 +41,15 @@ def isValid(form):
     for ch in form:
         if(ch == '('):
             level += 1
+            boolAlpha = False
+            boolPrime = False
+            boolDec = False
         elif(ch == ')'):
             if(level > 0):
                 level -= 1
             else:
                 valid = False
-        if(ch == '(' or ch == ')'):
-            boolAlpha = False
+            boolAlpha = True
             boolPrime = False
             boolDec = False
         else:
@@ -55,7 +57,7 @@ def isValid(form):
                 boolAlpha = True
                 boolPrime = False
                 boolDec = False
-            elif(ch == '\'' and boolAlpha and not boolPrime):
+            elif((ch == '\'' or ch == 'P') and boolAlpha and not boolPrime and not boolDec):
                 if(boolDec):
                     boolAlpha = False
                     boolDec = False
@@ -114,42 +116,70 @@ def parCondense(form, tar):
     return ans[:-1]
 
 def rawCondense(form):
-    # string to array
+    if(form.isdigit()):
+        return form
+    # string to 2d count array
     temp = []
     for i in range(len(form)):
-        if((form[i] >= 'a' and form[i] <= 'z') or (form[i] >= 'A' and form[i] <= 'Z')):
-            temp.append(form[i])
+        if(form[i].isalpha() and not form[i] == 'P'):
+            temp.append([form[i], ""])
         else:
-            temp[-1] += form[i]
-    # array to 2d count array
-    val = []
+            if(form[i].isdigit()):
+                temp[-1][1] += form[i]
+            else:
+                temp[-1][0] += '\''
+    # int() of count
     for i in range(len(temp)):
-        if(len(val) > 0 and val[-1][0] == temp[i]):
-            val[-1][1] += 1
+        if(temp[i][1] == ""):
+            temp[i][1] = 1
         else:
-            val.append([temp[i], 1])
+            temp[i][1] = int(temp[i][1])
+    # removing anti moves and combining same moves
+    while True:
+        isChange = False
+        for i in range(len(temp) - 1):
+            if(isPrimePair(temp[i][0], temp[i + 1][0])):
+                minv = min(temp[i][1], temp[i + 1][1])
+                temp[i][1] -= minv
+                temp[i + 1][1] -= minv
+                if(temp[i + 1][1] == 0):
+                    temp.pop(i + 1)
+                if(temp[i][1] == 0):
+                    temp.pop(i)
+                isChange = True
+                break
+            elif(temp[i][0] == temp[i + 1][0]):
+                temp[i][1] += temp[i + 1][1]
+                temp.pop(i + 1)
+                isChange = True
+                break
+        if(not isChange):
+            break
     # limit count to 2 and inverse moves for 3
-    for i in range(len(val)):
-        val[i][1] = ((val[i][1] - 1) % 4) + 1
-        if(val[i][1] == 3):
-            val[i][0] = val[i][0][0] if (len(val[i][0]) == 2) else val[i][0] + '\''
-            val[i][1] = 1
-        elif(val[i][1] == 4):
-            val[i][1] = 0
-    # removing negating moves
-    for i in range(len(val) - 1):
-        if(len(val[i][0]) != len(val[i + 1][0]) and val[i][0][0] == val[i + 1][0][0]):
-            minv = min(val[i][1], val[i + 1][1])
-            val[i][1] -= minv
-            val[i + 1][1] -= minv
+    for i in range(len(temp)):
+        temp[i][1] = ((temp[i][1] - 1) % 4) + 1
+        if(temp[i][1] == 3):
+            if(len(temp[i][0]) == 2):
+                temp[i][0] = temp[i][0][0]
+            else:
+                temp[i][0] += '\''
+            temp[i][1] = 1
+        elif(temp[i][1] == 4):
+            temp[i][1] = 0
     # 2d count array to string
     cform = ""
-    for i in range(len(val)):
-        if(val[i][1] > 0):
-            cform += val[i][0]
-            if(val[i][1] == 2):
+    for i in range(len(temp)):
+        if(temp[i][1] > 0):
+            cform += temp[i][0]
+            if(temp[i][1] == 2):
                 cform += '2'
     return cform
+
+def isPrimePair(s1, s2):
+    if(len(s1) != len(s2) and s1[0] == s2[0]):
+        return True
+    else:
+        return False
 
 def parseFormula(form, condense = True):
     if(condense):
