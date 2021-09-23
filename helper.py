@@ -34,12 +34,35 @@ def condenseFormula(form, advanced=True):
 def isValid(form):
     level = 0
     valid = True
+    validAlpha = ['U', 'D', 'R', 'L', 'F', 'B', 'E', 'M', 'S', 'x', 'y', 'z', 'u', 'd', 'r', 'l', 'f', 'b']
+    boolAlpha = False
+    boolPrime = False
+    boolDec = False
     for ch in form:
         if(ch == '('):
             level += 1
         elif(ch == ')'):
             if(level > 0):
                 level -= 1
+            else:
+                valid = False
+        if(ch == '(' or ch == ')'):
+            boolAlpha = False
+            boolPrime = False
+            boolDec = False
+        else:
+            if(ch in validAlpha):
+                boolAlpha = True
+                boolPrime = False
+                boolDec = False
+            elif(ch == '\'' and boolAlpha and not boolPrime):
+                if(boolDec):
+                    boolAlpha = False
+                    boolDec = False
+                else:
+                    boolPrime = True
+            elif(ch.isdigit() and boolAlpha):
+                boolDec = True
             else:
                 valid = False
     if(level != 0):
@@ -65,19 +88,19 @@ def parCondense(form, tar):
     ref = ""
     refctr = 0
     ctr = 0
-    for i in range(len(form)):
-        if(form[i] == '('):
+    for ch in form:
+        if(ch == '('):
             ctr += 1
         if(ctr >= tar):
-            temp += form[i]
+            temp += ch
         else:
             if(len(ref) > 0):
                 ans += ref
                 ans += str(refctr) if refctr > 1 else ""
                 ref = ""
                 refctr = 0
-            ans += form[i]
-        if(form[i] == ')'):
+            ans += ch
+        if(ch == ')'):
             if(ctr == tar):
                 if(temp == ref):
                     refctr += 1
