@@ -8,7 +8,6 @@ Python program that solves the Rubik's cube using CFOP method.
 Its currently under development.
 
 You can currently create a cube object and move it using formulas.The code for cube manipulation can be found in `cube.py`.
-
 The parsing and validation for formulas is done and can be found in `helper.py`.
 
 You can create a cube object and move it by doing,
