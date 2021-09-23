@@ -30,7 +30,6 @@ The cube printing format is defined as
  Y
 RGOB
  W
-
 ```
 
 The cube front face is assumed as Green and the top face is assumed as Yellow. (If input is given otherwise, it automatically reorients itself).
