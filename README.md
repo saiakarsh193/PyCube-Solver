@@ -36,3 +36,6 @@ and the cube index format (if you want to tinker with the code) is defined as
  4
 ```
 The cube front face is assumed as Green and the top face is assumed as Yellow. (If input is given otherwise, it automatically reorients itself).  
+
+The cube notation followed in this code,  
+<img src="https://i.ibb.co/7W8mHRN/cubenotation.jpg" alt="ThreeJS Coordinates" style="width: 400px;"/>
