@@ -1,11 +1,15 @@
 from helper import parseFormula
+import copy
 
 class Cube:
-    def __init__(self):
+    def __init__(self, faces = "None"):
         self.orientation = [[5, 1, 4, 3], [5, 2, 4, 0], [5, 3, 4, 1], [5, 0, 4, 2], [0, 1, 2, 3], [2, 1, 0, 3]]
         self.rotmap = [[[2, 0], [2, 1], [2, 2], [0, 0], [1, 0], [2, 0], [0, 2], [0, 1], [0, 0], [2, 2], [1, 2], [0, 2]], [[2, 2], [1, 2], [0, 2], [0, 0], [1, 0], [2, 0], [2, 2], [1, 2], [0, 2], [2, 2], [1, 2], [0, 2]], [[0, 2], [0, 1], [0, 0], [0, 0], [1, 0], [2, 0], [2, 0], [2, 1], [2, 2], [2, 2], [1, 2], [0, 2]], [[0, 0], [1, 0], [2, 0], [0, 0], [1, 0], [2, 0], [0, 0], [1, 0], [2, 0], [2, 2], [1, 2], [0, 2]], [[2, 0], [2, 1], [2, 2], [2, 0], [2, 1], [2, 2], [2, 0], [2, 1], [2, 2], [2, 0], [2, 1], [2, 2]], [[0, 2], [0, 1], [0, 0], [0, 2], [0, 1], [0, 0], [0, 2], [0, 1], [0, 0], [0, 2], [0, 1], [0, 0]]]
         self.sideTocmap = ["G", "O", "B", "R", "W", "Y"]
-        self.cube = [[[self.sideTocmap[c]] * 3 for _ in range(3)] for c in range(6)]
+        if(faces == "None"):
+            self.cube = [[[self.sideTocmap[c]] * 3 for _ in range(3)] for c in range(6)]
+        else:
+            self.cube = faces
 
     def print(self):
         for i in range(3):
@@ -217,3 +221,5 @@ class Cube:
             self.__move(m)
         return
 
+    def getFaces(self):
+        return copy.deepcopy(self.cube)
