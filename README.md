@@ -28,4 +28,11 @@ RGOB
  W
 ```
 
+and the cube index format (if you want to tinker with the code) is defined as  
+
+```
+ 5
+3012
+ 4
+```
 The cube front face is assumed as Green and the top face is assumed as Yellow. (If input is given otherwise, it automatically reorients itself).  
