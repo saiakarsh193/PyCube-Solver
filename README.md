@@ -15,27 +15,24 @@ from cube import Cube
 cb = Cube()
 cb.doMoves("RUR'U'")
 cb.print()
-
 ```
 
-### Note  
-The cube object needs a few rules to be followed in order to not cause perspective issues.  
-The cube printing format is defined as  
-
-```
- Y
-RGOB
- W
-```
-
-and the cube index format (if you want to tinker with the code) is defined as  
-
-```
- 5
-3012
- 4
-```
-The cube front face is assumed as Green and the top face is assumed as Yellow. (If input is given otherwise, it automatically reorients itself).  
-
-The cube notation followed in this code,  
-<img src="https://i.ibb.co/7W8mHRN/cubenotation.jpg" alt="ThreeJS Coordinates" style="width: 400px;"/>
+### Notation  
+There are rules and methods that need to be followed in order to use the program. 
+- The moves in a rubik's cube are defines as follows,    
+  <img src="https://jperm.net/images/notation.png" alt="Rubik's Cube Moves" style="width: 400px;"/>  
+- The cube printing format is defined as  
+  ```
+   Y
+  RGOB
+   W
+  ```
+- The cube index format (if you want to tinker with the code) is defined as  
+  ```
+   5
+  3012
+   4
+  ```
+- The cube front face is assumed as Green and the top face is assumed as Yellow (If input is given otherwise, it automatically reorients itself)  
+- The cube face notation followed in this code,  
+  <img src="https://i.ibb.co/7W8mHRN/cubenotation.jpg" alt="ThreeJS Coordinates" style="width: 400px;"/>
