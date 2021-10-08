@@ -23,9 +23,15 @@ There are rules and methods that need to be followed in order to use the program
   <img src="https://jperm.net/images/notation.png" alt="Rubik's Cube Moves" style="width: 400px;"/>  
 - The cube printing format is defined as  
   ```
-   Y
-  RGOB
-   W
+      YYY
+      YYY
+      YYY
+  RRR GGG OOO BBB
+  RRR GGG OOO BBB
+  RRR GGG OOO BBB
+      WWW
+      WWW
+      WWW
   ```
 - The cube index format (if you want to tinker with the code) is defined as  
   ```
