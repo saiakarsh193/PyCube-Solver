@@ -3,11 +3,14 @@ from solver import Solver
 from helper import getScramble
 
 c = Cube()
-c.doMoves(getScramble(10))
-c.doMoves("xy")
+scramble = "FLFDB'UR'F'"
+# scramble = "FLFDB'Uxy"
+# c.doMoves(getScramble(10))
+c.doMoves(scramble)
 
 s = Solver(c)
-moves = s.solveCube(debug = True)
+s.solveCube(debug = True)
+moves = s.getMoves()
 print("Moves:")
 for mv in moves:
     print(mv)
