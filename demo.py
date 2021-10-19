@@ -3,9 +3,8 @@ from solver import Solver
 from helper import getScramble
 
 c = Cube()
-scramble = "FLFDB'UR'F'"
-# scramble = "FLFDB'Uxy"
-# c.doMoves(getScramble(10))
+scramble = getScramble(10)
+print(scramble)
 c.doMoves(scramble)
 
 s = Solver(c)
