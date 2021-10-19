@@ -11,31 +11,33 @@ class Cube:
         else:
             self.cube = faces
 
-    def print(self):
+    def __str__(self):
+        pstr = ""
         for i in range(3):
-            print("    ", end="")
+            pstr += "    "
             for j in range(3):
-                print(self.cube[5][i][j], end="")
-            print()
+                pstr += self.cube[5][i][j]
+            pstr += "\n"
         for i in range(3):
             for j in range(3):
-                print(self.cube[3][i][j], end="")
-            print(" ", end="")
+                pstr += self.cube[3][i][j]
+            pstr += " "
             for j in range(3):
-                print(self.cube[0][i][j], end="")
-            print(" ", end="")
+                pstr += self.cube[0][i][j]
+            pstr += " "
             for j in range(3):
-                print(self.cube[1][i][j], end="")
-            print(" ", end="")
+                pstr += self.cube[1][i][j]
+            pstr += " "
             for j in range(3):
-                print(self.cube[2][i][j], end="")
-            print()
+                pstr += self.cube[2][i][j]
+            pstr += "\n"
         for i in range(3):
-            print("    ", end="")
+            pstr += "    "
             for j in range(3):
-                print(self.cube[4][i][j], end="")
-            print()
-        print()
+                pstr += self.cube[4][i][j]
+            pstr += "\n"
+        pstr += "\n"
+        return pstr
 
     def __rotateClock(self, side):
         temp = [self.cube[side][0][1], self.cube[side][0][2]]
