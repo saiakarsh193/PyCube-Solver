@@ -14,7 +14,7 @@ You can create a cube object and move it by doing,
 from cube import Cube
 cb = Cube()
 cb.doMoves("RUR'U'")
-cb.print()
+print(cb)
 ```
 
 ### Notation  
