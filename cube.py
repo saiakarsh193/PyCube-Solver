@@ -35,8 +35,8 @@ class Cube:
             pstr += "    "
             for j in range(3):
                 pstr += self.cube[4][i][j]
-            pstr += "\n"
-        pstr += "\n"
+            if(i != 2):
+                pstr += "\n"
         return pstr
 
     def __rotateClock(self, side):
