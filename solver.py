@@ -22,7 +22,7 @@ def moveMapper(side, form):
             moves.append(ch)
         else:
             moves[-1] += ch
-    for i in range(len(moves)):
+    for i, item in enumerate(moves):
         if moves[i] in movedata:
             moves[i] = movedata[moves[i]][side]
     return ''.join(moves)
@@ -39,6 +39,7 @@ class Solver():
             print(self.cube)
         self.__alignFaces()
         self.__baseCross()
+        self.__firstLayer()
         if(debug):
             print("After:")
             print(self.cube)
@@ -124,3 +125,6 @@ class Solver():
                         self.__move(moveMapper(i, "L'U'L"))
                     break
         self.__baseCross()
+
+    def __firstLayer(self):
+        return
