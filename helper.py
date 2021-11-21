@@ -120,7 +120,7 @@ def rawCondense(form):
         return form
     # string to 2d count array
     temp = []
-    for i in range(len(form)):
+    for i, item in enumerate(form):
         if(form[i].isalpha() and not form[i] == 'P'):
             temp.append([form[i], ""])
         else:
@@ -129,7 +129,7 @@ def rawCondense(form):
             else:
                 temp[-1][0] += '\''
     # int() of count
-    for i in range(len(temp)):
+    for i, item in enumerate(temp):
         if(temp[i][1] == ""):
             temp[i][1] = 1
         else:
@@ -156,7 +156,7 @@ def rawCondense(form):
         if(not isChange):
             break
     # limit count to 2 and inverse moves for 3
-    for i in range(len(temp)):
+    for i, item in enumerate(temp):
         temp[i][1] = ((temp[i][1] - 1) % 4) + 1
         if(temp[i][1] == 3):
             if(len(temp[i][0]) == 2):
@@ -168,7 +168,7 @@ def rawCondense(form):
             temp[i][1] = 0
     # 2d count array to string
     cform = ""
-    for i in range(len(temp)):
+    for i, item in enumerate(temp):
         if(temp[i][1] > 0):
             cform += temp[i][0]
             if(temp[i][1] == 2):
@@ -176,10 +176,7 @@ def rawCondense(form):
     return cform
 
 def isPrimePair(s1, s2):
-    if(len(s1) != len(s2) and s1[0] == s2[0]):
-        return True
-    else:
-        return False
+    return bool(len(s1) != len(s2) and s1[0] == s2[0])
 
 def parseFormula(form, condense = True):
     if(condense):
@@ -187,7 +184,7 @@ def parseFormula(form, condense = True):
     moves = [ch for ch in form]
     vwMoves = ['U', 'D', 'R', 'L', 'F', 'B']
     # Convert w moves to base moves
-    for i in range(len(moves)):
+    for i, item in enumerate(moves):
         if(moves[i] == 'w'):
             moves.pop(i)
             if(i > 0 and moves[i - 1] in vwMoves):
@@ -195,7 +192,7 @@ def parseFormula(form, condense = True):
     # Convert outprimes to base moves
     vMoves = ['U', 'D', 'R', 'L', 'F', 'B', 'E', 'M', 'S', 'x', 'y', 'z', 'u', 'd', 'r', 'l', 'f', 'b']
     cvm = -1
-    for i in range(len(moves)):
+    for i, item in enumerate(moves):
         if(moves[i] in vMoves):
             cvm = i
         if(moves[i] == '\'' or moves[i] == 'P'):
@@ -205,7 +202,7 @@ def parseFormula(form, condense = True):
                 cvm = -1
     # Converting the characters into move blocks
     ans = []
-    for i in range(len(moves)):
+    for i, item in enumerate(moves):
         if(moves[i] in vMoves):
             cm = moves[i]
             ctr = 1
