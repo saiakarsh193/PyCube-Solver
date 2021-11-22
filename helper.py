@@ -179,6 +179,8 @@ def isPrimePair(s1, s2):
     return bool(len(s1) != len(s2) and s1[0] == s2[0])
 
 def parseFormula(form, condense = True):
+    if(not isValid(form)):
+        return []
     if(condense):
         form = condenseFormula(form)
     moves = [ch for ch in form]
