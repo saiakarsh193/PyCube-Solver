@@ -64,10 +64,6 @@ positionTransformData = [
     ]
 ]
 
-def positionMapper(target, side, row, col):
-    aside, arow, acol = positionTransformData[target][side][row][col]
-    return self.faces[aside][arow][acol]
-
 class Solver():
     def __init__(self, cube):
         self.cube = Cube(faces = cube.getFaces())
@@ -88,6 +84,10 @@ class Solver():
     
     def getMoves(self):
         return self.forms
+
+    def positionMapper(self, target, side, row, col):
+        aside, arow, acol = positionTransformData[target][side][row][col]
+        return self.faces[aside][arow][acol]
 
     def __move(self, form):
         self.cube.doMoves(form)
