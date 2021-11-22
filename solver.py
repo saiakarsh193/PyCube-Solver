@@ -169,6 +169,3 @@ class Solver():
 
     def __firstLayer(self):
         return
-
-if(__name__ == "__main__"):
-    print(positionMapper(0, 5, 1, 1))
