@@ -1,15 +1,58 @@
 import random
 
 def getScramble(length):
+    """
+    Generates a scramble string.
+
+    Parameters
+    ----------
+    length : string
+        Length of the scramble string to be created.
+
+    Returns
+    -------
+    scr : string
+        A string that has the scramble of the given length.
+
+    Examples
+    --------
+    >>> getScramble(10)
+    "RLB'F'LU'RDL'F'"
+    """
     vMoves = ['U', 'D', 'R', 'L', 'F', 'B'] # 'Uw', 'Dw', 'Rw', 'Lw', 'Fw', 'Bw', 'E', 'M', 'S', 'x', 'y', 'z']
     scr = ""
     for _ in range(length):
         scr += vMoves[int(random.random() * len(vMoves))]
         if(random.random() > 0.7):
             scr += '\''
-    return condenseFormula(scr)
+    scr = condenseFormula(scr)
+    return scr
 
 def condenseFormula(form, advanced=True):
+    """
+    Condenses a forumla.
+
+    Parameters
+    ----------
+    form : string
+        The formula to be condensed.
+    advanced : bool, default=True
+        If set to True, it will support multi level paranthesis reduction and condensation. 
+        Enabling this will make it much slower.
+        If set to False, it is the same as rawCondense()
+
+    Returns
+    -------
+    ans : string
+        The condensed form of the given formula.
+
+    Examples
+    --------
+    >>> condenseFormula("RUUFB'B'")
+    "RU2FB'2"
+    >>> condenseFormula("(RUU)(RUU)") 
+    '(RU2)2'
+    """
     if(not isValid(form)):
         return "ERROR"
     if(not advanced):
@@ -32,6 +75,30 @@ def condenseFormula(form, advanced=True):
     return ans
 
 def isValid(form):
+    """
+    Checks the structural and symbol validity of the forumla.
+
+    Parameters
+    ----------
+    form : string
+        The formula to be validated.
+
+    Returns
+    -------
+    valid : bool
+        Whether the formula is valid or not.
+
+    Examples
+    --------
+    >>> isValid("RUR'U'")
+    True
+    >>> isValid("RUR'UG") 
+    False
+    >>> isValid("(RU)((F2)2)") 
+    True
+    >>> isValid("((DU")        
+    False
+    """
     level = 0
     valid = True
     validAlpha = ['U', 'D', 'R', 'L', 'F', 'B', 'E', 'M', 'S', 'x', 'y', 'z', 'u', 'd', 'r', 'l', 'f', 'b']
@@ -72,6 +139,19 @@ def isValid(form):
     return valid
 
 def getMaxLevel(form):
+    """
+    Calculates the max depth of the paranthesis.
+
+    Parameters
+    ----------
+    form : string
+        Formula.
+
+    Returns
+    -------
+    maxlevel : int
+        The max depth of the paranthesis.
+    """
     level = 0
     maxlevel = 0
     for ch in form:
@@ -84,6 +164,21 @@ def getMaxLevel(form):
     return maxlevel
 
 def parCondense(form, tar):
+    """
+    Performs paranthesis reduction at a particular depth.
+
+    Parameters
+    ----------
+    form : string
+        Formula.
+    tar : int
+        Target depth for paranthesis condensation.
+
+    Returns
+    -------
+    ans : string
+        The condensed paranthesis form of the given formula.
+    """
     form += '@'
     ans = ""
     temp = ""
@@ -113,9 +208,29 @@ def parCondense(form, tar):
                     refctr = 1
                 temp = ""
             ctr -= 1
-    return ans[:-1]
+    ans = ans[:-1]
+    return ans
 
 def rawCondense(form):
+    """
+    Condenses a forumla. Does not support paranthesis. Does not perform validity as it is a core function.
+
+    Parameters
+    ----------
+    form : string
+        The formula to be condensed.
+        The formula should be native and valid.
+
+    Returns
+    -------
+    cform : string
+        The condensed form of the given formula.
+
+    Examples
+    --------
+    >>> rawCondense("RUUFB'B'")
+    "RU2FB'2"
+    """
     if(form.isdigit()):
         return form
     # string to 2d count array
@@ -176,9 +291,36 @@ def rawCondense(form):
     return cform
 
 def isPrimePair(s1, s2):
+    """
+    Checks if the two moves are primes of each other assuming both are simple moves.
+    """
     return bool(len(s1) != len(s2) and s1[0] == s2[0])
 
 def parseFormula(form, condense = True):
+    """
+    Parses a complex formula into cube object understandable instructions.
+
+    Parameters
+    ----------
+    form : string
+        The formula to be parsed.
+    condense : bool, default=True
+        If set to True, it will perform condensation to the formula before parsing.
+        This will skip redundant moves if present.
+
+    Returns
+    -------
+    ans : list of strings
+        List of instructions that the cube object can understand.
+        Empty list if the formula is invalid.
+
+    Examples
+    --------
+    >>> parseFormula("FRUR'URU2R'U") 
+    ['F', 'R', 'U', 'RP', 'U', 'R', 'U', 'U', 'RP', 'U']
+    >>> parseFormula("FRU(")
+    []
+    """
     if(not isValid(form)):
         return []
     if(condense):
