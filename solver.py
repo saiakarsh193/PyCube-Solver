@@ -1,5 +1,5 @@
 from cube import Cube
-from solver_data import movedata, positionTransformData
+from solver_data import movedata, positionTransformData, whiteEdgePairs, whiteEdgeDirectMoves
 
 class Solver():
     def __init__(self, cube):
@@ -11,10 +11,9 @@ class Solver():
         if(debug):
             print("Before:")
             print(self.cube)
-        # self.__alignFaces()
-        # self.__baseCross()
-        self.__baseCross2()
-        # self.__firstLayer()
+        self.__alignFaces()
+        self.__baseCross()
+        self.__firstLayer()
         if(debug):
             print("After:")
             print(self.cube)
@@ -61,80 +60,56 @@ class Solver():
         elif(self.faces[3][1][1] == "Y"):
             self.__move("z")
 
-    def __baseCrossGetEmptySlot(self, target):
+    def __baseCross(self):
         # G O B R
-        best_i = 0
-        best_score = 0
+        t_slot = 0
+        t_score = 0
         for i in range(4):
             score = bool(self.positionMapper(i, 0, 2, 1) == "G" and self.positionMapper(i, 4, 0, 1) == "W") + bool(self.positionMapper(i, 1, 2, 1) == "O" and self.positionMapper(i, 4, 1, 2) == "W") + bool(self.positionMapper(i, 2, 2, 1) == "B" and self.positionMapper(i, 4, 2, 1) == "W") + bool(self.positionMapper(i, 3, 2, 1) == "R" and self.positionMapper(i, 4, 1, 0) == "W")
-            if(score > best_score):
-                best_i = i
-                best_score = best_score
-        return best_i
-
-    def __baseCross2(self):
-        slot = self.__baseCrossGetEmptySlot("")
+            if(score > t_score):
+                t_slot = i
+                t_score = score
+        if(t_score == 4):
+            if(t_slot == 1):
+                self.__move("D'")
+            elif(t_slot == 2):
+                self.__move("D2")
+            elif(t_slot == 3):
+                self.__move("D")
+            return
         #  0
         # 3 1
         #  2
-        slotToColorMap = {"G": (0 + slot) % 4, "O": (1 + slot) % 4, "B": (2 + slot) % 4, "R": (3 + slot) % 4}
-        print(slotToColorMap)
-        return
-
-    def __baseCross(self):
-        if(self.faces[4][0][1] == "W" and self.faces[4][1][0] == "W" and self.faces[4][1][2] == "W" and self.faces[4][2][1] == "W" and self.faces[0][2][1] == "G" and self.faces[1][2][1] == "O" and self.faces[2][2][1] == "B" and self.faces[3][2][1] == "R"):
-            return
-        if(self.faces[5][0][1] == "W" or self.faces[5][1][2] == "W" or self.faces[5][2][1] == "W" or self.faces[5][1][0] == "W"):
-            if(self.faces[5][0][1] == "W"):
-                if(self.faces[2][0][1] == self.faces[2][1][1]):
-                    self.__move("B2")
-                elif(self.faces[2][0][1] == self.faces[3][1][1]):
-                    self.__move("U'")
-                else:
-                    self.__move("U")
-            if(self.faces[5][1][2] == "W"):
-                if(self.faces[1][0][1] == self.faces[1][1][1]):
-                    self.__move("R2")
-                elif(self.faces[1][0][1] == self.faces[2][1][1]):
-                    self.__move("U'")
-                else:
-                    self.__move("U")
-            if(self.faces[5][2][1] == "W"):
-                if(self.faces[0][0][1] == self.faces[0][1][1]):
-                    self.__move("F2")
-                elif(self.faces[0][0][1] == self.faces[1][1][1]):
-                    self.__move("U'")
-                else:
-                    self.__move("U")
-            if(self.faces[5][1][0] == "W"):
-                if(self.faces[3][0][1] == self.faces[3][1][1]):
-                    self.__move("L2")
-                elif(self.faces[3][0][1] == self.faces[0][1][1]):
-                    self.__move("U'")
-                else:
-                    self.__move("U")
-        elif((self.faces[4][0][1] == "W" and self.faces[0][2][1] != "G") or (self.faces[4][1][2] == "W" and self.faces[1][2][1] != "O") or (self.faces[4][2][1] == "W" and self.faces[2][2][1] != "B") or (self.faces[4][1][0] == "W" and self.faces[3][2][1] != "R")):
-            if(self.faces[4][0][1] == "W" and self.faces[0][2][1] != "G"):
-                side = 0
-            elif(self.faces[4][1][2] == "W" and self.faces[1][2][1] != "O"):
-                side = 1
-            elif(self.faces[4][2][1] == "W" and self.faces[2][2][1] != "B"):
-                side = 2
-            else:
-                side = 3
-            self.__move(self.moveMapper(side, "F2"))
-        else:
-            for i in range(4):
-                if(self.faces[i][0][1] == "W" or self.faces[i][1][2] == "W" or self.faces[i][2][1] == "W" or self.faces[i][1][0] == "W"):
-                    if(self.faces[i][0][1] == "W"):
-                        self.__move(self.moveMapper(i, "FRUR'U'F'"))
-                    elif(self.faces[i][1][2] == "W"):
-                        self.__move(self.moveMapper(i, "RUR'"))
-                    elif(self.faces[i][2][1] == "W"):
-                        self.__move(self.moveMapper(i, "F"))
-                    else:
-                        self.__move(self.moveMapper(i, "L'U'L"))
+        slotToColorMap = {"G": (0 + t_slot) % 4, "O": (1 + t_slot) % 4, "B": (2 + t_slot) % 4, "R": (3 + t_slot) % 4}
+        slot_to_persp = [[0, 1, 2, 3], [3, 0, 1, 2], [2, 3, 0, 1], [1, 2, 3, 0]]
+        target = ""
+        target_other = ""
+        target_persp = ""
+        for persp in range(4):
+            for pos in whiteEdgePairs.keys():
+                aside, arow, acol = pos
+                if(self.positionMapper(persp, aside, arow, acol) == "W"):
+                    target = pos
+                    target_other = whiteEdgePairs[pos]
                     break
+            if(bool(target)):
+                target_persp = persp
+                break
+        if(bool(target)):
+            target_other_color = self.positionMapper(target_persp, target_other[0], target_other[1], target_other[2])
+            g_slot = slotToColorMap[target_other_color]
+            p_slot = slot_to_persp[target_persp][g_slot]
+            edgeMove = whiteEdgeDirectMoves[target][p_slot]
+            self.__move(self.moveMapper(target_persp, edgeMove))
+        else:
+            if(self.positionMapper(t_slot, 0, 2, 1) != "G"):
+                self.__move(self.moveMapper(t_slot, "F2"))
+            elif(self.positionMapper(t_slot, 1, 2, 1) != "O"):
+                self.__move(self.moveMapper(t_slot, "R2"))
+            elif(self.positionMapper(t_slot, 2, 2, 1) != "B"):
+                self.__move(self.moveMapper(t_slot, "B2"))
+            else:
+                self.__move(self.moveMapper(t_slot, "L2"))
         self.__baseCross()
 
     def __firstLayer(self):
