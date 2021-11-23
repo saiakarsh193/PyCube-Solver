@@ -1,68 +1,5 @@
 from cube import Cube
-
-movedata = {
-    "R": ["R", "B", "L", "F"],
-    "R'": ["R'", "B'", "L'", "F'"],
-    "U": ["U", "U", "U", "U"],
-    "U'": ["U'", "U'", "U'", "U'"],
-    "L": ["L", "F", "R", "B"],
-    "L'": ["L'", "F'", "R'", "B'"],
-    "D": ["D", "D", "D", "D"],
-    "D'": ["D'", "D'", "D'", "D'"],
-    "F": ["F", "R", "B", "L"],
-    "F'": ["F'", "R'", "B'", "L'"],
-    "B": ["B", "L", "F", "R"],
-    "B'": ["B'", "L'", "F'", "R'"]
-    }
-
-def moveMapper(side, form):
-    moves = []
-    for ch in form:
-        if(ch.isalpha() or ch.isdigit()):
-            moves.append(ch)
-        else:
-            moves[-1] += ch
-    for i, item in enumerate(moves):
-        if moves[i] in movedata:
-            moves[i] = movedata[moves[i]][side]
-    return ''.join(moves)
-
-positionTransformData = [
-    # target (0 - 3 only)
-    [
-        # sides
-        [[(0, 0, 0), (0, 0, 1), (0, 0, 2)], [(0, 1, 0), (0, 1, 1), (0, 1, 2)], [(0, 2, 0), (0, 2, 1), (0, 2, 2)]],
-        [[(1, 0, 0), (1, 0, 1), (1, 0, 2)], [(1, 1, 0), (1, 1, 1), (1, 1, 2)], [(1, 2, 0), (1, 2, 1), (1, 2, 2)]],
-        [[(2, 0, 0), (2, 0, 1), (2, 0, 2)], [(2, 1, 0), (2, 1, 1), (2, 1, 2)], [(2, 2, 0), (2, 2, 1), (2, 2, 2)]],
-        [[(3, 0, 0), (3, 0, 1), (3, 0, 2)], [(3, 1, 0), (3, 1, 1), (3, 1, 2)], [(3, 2, 0), (3, 2, 1), (3, 2, 2)]],
-        [[(4, 0, 0), (4, 0, 1), (4, 0, 2)], [(4, 1, 0), (4, 1, 1), (4, 1, 2)], [(4, 2, 0), (4, 2, 1), (4, 2, 2)]],
-        [[(5, 0, 0), (5, 0, 1), (5, 0, 2)], [(5, 1, 0), (5, 1, 1), (5, 1, 2)], [(5, 2, 0), (5, 2, 1), (5, 2, 2)]]
-    ],
-    [
-        [[(1, 0, 0), (1, 0, 1), (0, 0, 2)], [(1, 1, 0), (1, 1, 1), (1, 1, 2)], [(1, 2, 0), (1, 2, 1), (1, 2, 2)]],
-        [[(2, 0, 0), (2, 0, 1), (1, 0, 2)], [(2, 1, 0), (2, 1, 1), (2, 1, 2)], [(2, 2, 0), (2, 2, 1), (2, 2, 2)]],
-        [[(3, 0, 0), (3, 0, 1), (2, 0, 2)], [(3, 1, 0), (3, 1, 1), (3, 1, 2)], [(3, 2, 0), (3, 2, 1), (3, 2, 2)]],
-        [[(0, 0, 0), (0, 0, 1), (3, 0, 2)], [(0, 1, 0), (0, 1, 1), (0, 1, 2)], [(0, 2, 0), (0, 2, 1), (0, 2, 2)]],
-        [[(4, 2, 0), (4, 1, 0), (4, 0, 0)], [(4, 2, 1), (4, 1, 1), (4, 0, 1)], [(4, 2, 2), (4, 1, 2), (4, 0, 2)]],
-        [[(5, 0, 2), (5, 1, 2), (5, 2, 2)], [(5, 0, 1), (5, 1, 1), (5, 2, 1)], [(5, 0, 0), (5, 1, 0), (5, 2, 0)]]
-    ],
-    [
-        [[(2, 0, 0), (2, 0, 1), (2, 0, 2)], [(2, 1, 0), (2, 1, 1), (2, 1, 2)], [(2, 2, 0), (2, 2, 1), (2, 2, 2)]],
-        [[(3, 0, 0), (3, 0, 1), (3, 0, 2)], [(3, 1, 0), (3, 1, 1), (3, 1, 2)], [(3, 2, 0), (3, 2, 1), (3, 2, 2)]],
-        [[(0, 0, 0), (0, 0, 1), (0, 0, 2)], [(0, 1, 0), (0, 1, 1), (0, 1, 2)], [(0, 2, 0), (0, 2, 1), (0, 2, 2)]],
-        [[(1, 0, 0), (1, 0, 1), (1, 0, 2)], [(1, 1, 0), (1, 1, 1), (1, 1, 2)], [(1, 2, 0), (1, 2, 1), (1, 2, 2)]],
-        [[(4, 2, 2), (4, 2, 1), (4, 2, 0)], [(4, 1, 2), (4, 1, 1), (4, 1, 0)], [(4, 0, 2), (4, 0, 1), (4, 0, 0)]],
-        [[(5, 2, 2), (5, 2, 1), (5, 2, 0)], [(5, 1, 2), (5, 1, 1), (5, 1, 0)], [(5, 0, 2), (5, 0, 1), (5, 0, 0)]]
-    ],
-    [
-        [[(3, 0, 0), (3, 0, 1), (3, 0, 2)], [(3, 1, 0), (3, 1, 1), (3, 1, 2)], [(3, 2, 0), (3, 2, 1), (3, 2, 2)]],
-        [[(0, 0, 0), (0, 0, 1), (0, 0, 2)], [(0, 1, 0), (0, 1, 1), (0, 1, 2)], [(0, 2, 0), (0, 2, 1), (0, 2, 2)]],
-        [[(1, 0, 0), (1, 0, 1), (1, 0, 2)], [(1, 1, 0), (1, 1, 1), (1, 1, 2)], [(1, 2, 0), (1, 2, 1), (1, 2, 2)]],
-        [[(2, 0, 0), (2, 0, 1), (2, 0, 2)], [(2, 1, 0), (2, 1, 1), (2, 1, 2)], [(2, 2, 0), (2, 2, 1), (2, 2, 2)]],
-        [[(4, 0, 2), (4, 1, 2), (4, 2, 2)], [(4, 0, 1), (4, 1, 1), (4, 2, 1)], [(4, 0, 0), (4, 1, 0), (4, 2, 0)]],
-        [[(5, 2, 0), (5, 1, 0), (5, 0, 0)], [(5, 2, 1), (5, 1, 1), (5, 0, 1)], [(5, 2, 2), (5, 1, 2), (5, 0, 2)]]
-    ]
-]
+from solver_data import movedata, positionTransformData
 
 class Solver():
     def __init__(self, cube):
@@ -74,9 +11,10 @@ class Solver():
         if(debug):
             print("Before:")
             print(self.cube)
-        self.__alignFaces()
-        self.__baseCross()
-        self.__firstLayer()
+        # self.__alignFaces()
+        # self.__baseCross()
+        self.__baseCross2()
+        # self.__firstLayer()
         if(debug):
             print("After:")
             print(self.cube)
@@ -84,6 +22,18 @@ class Solver():
     
     def getMoves(self):
         return self.forms
+
+    def moveMapper(self, side, form):
+        moves = []
+        for ch in form:
+            if(ch.isalpha() or ch.isdigit()):
+                moves.append(ch)
+            else:
+                moves[-1] += ch
+        for i, item in enumerate(moves):
+            if moves[i] in movedata:
+                moves[i] = movedata[moves[i]][side]
+        return ''.join(moves)
 
     def positionMapper(self, target, side, row, col):
         aside, arow, acol = positionTransformData[target][side][row][col]
@@ -110,6 +60,26 @@ class Solver():
             self.__move("z2")
         elif(self.faces[3][1][1] == "Y"):
             self.__move("z")
+
+    def __baseCrossGetEmptySlot(self, target):
+        # G O B R
+        best_i = 0
+        best_score = 0
+        for i in range(4):
+            score = bool(self.positionMapper(i, 0, 2, 1) == "G" and self.positionMapper(i, 4, 0, 1) == "W") + bool(self.positionMapper(i, 1, 2, 1) == "O" and self.positionMapper(i, 4, 1, 2) == "W") + bool(self.positionMapper(i, 2, 2, 1) == "B" and self.positionMapper(i, 4, 2, 1) == "W") + bool(self.positionMapper(i, 3, 2, 1) == "R" and self.positionMapper(i, 4, 1, 0) == "W")
+            if(score > best_score):
+                best_i = i
+                best_score = best_score
+        return best_i
+
+    def __baseCross2(self):
+        slot = self.__baseCrossGetEmptySlot("")
+        #  0
+        # 3 1
+        #  2
+        slotToColorMap = {"G": (0 + slot) % 4, "O": (1 + slot) % 4, "B": (2 + slot) % 4, "R": (3 + slot) % 4}
+        print(slotToColorMap)
+        return
 
     def __baseCross(self):
         if(self.faces[4][0][1] == "W" and self.faces[4][1][0] == "W" and self.faces[4][1][2] == "W" and self.faces[4][2][1] == "W" and self.faces[0][2][1] == "G" and self.faces[1][2][1] == "O" and self.faces[2][2][1] == "B" and self.faces[3][2][1] == "R"):
@@ -152,18 +122,18 @@ class Solver():
                 side = 2
             else:
                 side = 3
-            self.__move(moveMapper(side, "F2"))
+            self.__move(self.moveMapper(side, "F2"))
         else:
             for i in range(4):
                 if(self.faces[i][0][1] == "W" or self.faces[i][1][2] == "W" or self.faces[i][2][1] == "W" or self.faces[i][1][0] == "W"):
                     if(self.faces[i][0][1] == "W"):
-                        self.__move(moveMapper(i, "FRUR'U'F'"))
+                        self.__move(self.moveMapper(i, "FRUR'U'F'"))
                     elif(self.faces[i][1][2] == "W"):
-                        self.__move(moveMapper(i, "RUR'"))
+                        self.__move(self.moveMapper(i, "RUR'"))
                     elif(self.faces[i][2][1] == "W"):
-                        self.__move(moveMapper(i, "F"))
+                        self.__move(self.moveMapper(i, "F"))
                     else:
-                        self.__move(moveMapper(i, "L'U'L"))
+                        self.__move(self.moveMapper(i, "L'U'L"))
                     break
         self.__baseCross()
 
