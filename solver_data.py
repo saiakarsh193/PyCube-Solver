@@ -61,10 +61,22 @@ whiteEdgePairs = {
     (5, 1, 0): (3, 0, 1)
 }
 
+# more efficient than the proper version as i removed redundant "D" moves in the end
 whiteEdgeDirectMoves = {
+    (0, 0, 1): ["FDR'", "FR'F'", "DF'LF", "F'LF"],
+    (0, 1, 2): ["DR'", "R'", "D'R'", "F2LF2"],
+    (0, 2, 1): ["F'DR'", "F'R'", "F'D'R'", "FL"],
+    (0, 1, 0): ["D'L", "F2R'F2", "DL", "L"],
+    (5, 0, 1): ["U2F2", "UR2", "B2", "U'L2"],
+    (5, 1, 2): ["UF2", "R2", "U'B2", "U2L2"],
+    (5, 2, 1): ["F2", "U'R2", "U2B2", "UL2"],
+    (5, 1, 0): ["U'F2", "U2R2", "UB2", "L2"]
+}
+
+whiteEdgeDirectMovesProper = {
     (0, 0, 1): ["FDR'D'", "FR'F'", "DF'LFD'", "F'LF"],
     (0, 1, 2): ["DR'D'", "R'", "D'R'D", "F2LF2"],
-    (0, 2, 1): ["F'DR'D'", "F'R'", "FD'R'D", "FL"],
+    (0, 2, 1): ["F'DR'D'", "F'R'", "F'D'R'D", "FL"],
     (0, 1, 0): ["D'LD", "F2R'F2", "DLD'", "L"],
     (5, 0, 1): ["U2F2", "UR2", "B2", "U'L2"],
     (5, 1, 2): ["UF2", "R2", "U'B2", "U2L2"],
