@@ -4,11 +4,12 @@
 ### Description  
 Python program that solves the Rubik's cube using CFOP method.  
 Its currently under development.  
+Right now, the program can realign the cube and solve the base white cross pretty efficiently.  
 
-You can currently create a cube object and move it using formulas.The code for cube manipulation can be found in `cube.py`.  
+You can create a cube object and move it using formulas.The code for cube manipulation can be found in `cube.py`.  
 The parsing and validation for formulas is done and can be found in `helper.py`.  
 
-You can create a cube object and move it by doing,  
+You can create a cube object and move it by using the following code  
 
 ```python
 from cube import Cube
@@ -16,6 +17,18 @@ cb = Cube()
 cb.doMoves("RUR'U'")
 print(cb)
 ```
+
+If you want to use the cube solver (assuming you scrambled the cube), add the following code  
+
+```python
+from solver import Solver
+solver = Solver(cb)
+solver.solveCube()
+moves = solver.getMoves()
+for move in moves:
+    print(move)
+```
+_**Since its still under development, it does not totally solve the cube but rather does the white cross**_  
 
 ### Notation  
 There are rules and methods that need to be followed in order to use the program. 
