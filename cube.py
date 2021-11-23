@@ -2,6 +2,35 @@ from helper import parseFormula
 import copy
 
 class Cube:
+    """
+    An object which models a Rubik's cube and can be moved using formulas that follow the standard cube representation.
+
+    Parameters
+    ----------
+    faces : string, default="None"
+        Set the initial state of the cube to a specific cube faces matrix array.
+
+    Attributes
+    ----------
+    cube : list of size (6, 3, 3)
+        The internal cube faces matrix array for the cube object.
+    
+    Example
+    -------
+    >>> cb = Cube()
+    >>> cb.doMoves("RUR'U'")
+    >>> print(cb)
+        YYR
+        YYG
+        YYG
+    BRR GGW OOY BOO
+    RRR GGY BOO BBB
+    RRR GGG YOO BBB
+        WWO
+        WWW
+        WWW
+    """
+    
     def __init__(self, faces = "None"):
         self.orientation = [[5, 1, 4, 3], [5, 2, 4, 0], [5, 3, 4, 1], [5, 0, 4, 2], [0, 1, 2, 3], [2, 1, 0, 3]]
         self.rotmap = [[[2, 0], [2, 1], [2, 2], [0, 0], [1, 0], [2, 0], [0, 2], [0, 1], [0, 0], [2, 2], [1, 2], [0, 2]], [[2, 2], [1, 2], [0, 2], [0, 0], [1, 0], [2, 0], [2, 2], [1, 2], [0, 2], [2, 2], [1, 2], [0, 2]], [[0, 2], [0, 1], [0, 0], [0, 0], [1, 0], [2, 0], [2, 0], [2, 1], [2, 2], [2, 2], [1, 2], [0, 2]], [[0, 0], [1, 0], [2, 0], [0, 0], [1, 0], [2, 0], [0, 0], [1, 0], [2, 0], [2, 2], [1, 2], [0, 2]], [[2, 0], [2, 1], [2, 2], [2, 0], [2, 1], [2, 2], [2, 0], [2, 1], [2, 2], [2, 0], [2, 1], [2, 2]], [[0, 2], [0, 1], [0, 0], [0, 2], [0, 1], [0, 0], [0, 2], [0, 1], [0, 0], [0, 2], [0, 1], [0, 0]]]
@@ -218,10 +247,16 @@ class Cube:
             self.__move('S')
 
     def doMoves(self, moves):
+        """
+        Move or manipulate the cube using formulas.
+        """
+        # moves is sent to parseFormula() to get the object understandable instructions
         moves = parseFormula(moves)
         for m in moves:
             self.__move(m)
-        return
 
     def getFaces(self):
+        """
+        Deep copy the cube faces matrix array.
+        """
         return copy.deepcopy(self.cube)
