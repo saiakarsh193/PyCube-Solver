@@ -23,6 +23,7 @@ class Solver():
         return self.forms
 
     def moveMapper(self, side, form):
+        # flexible moves mapper from local perspective to global perspective
         moves = []
         for ch in form:
             if(ch.isalpha() or ch.isdigit()):
@@ -35,6 +36,7 @@ class Solver():
         return ''.join(moves)
 
     def positionMapper(self, target, side, row, col):
+        # position mapper that maps perspective local positions to global positions
         aside, arow, acol = positionTransformData[target][side][row][col]
         return self.faces[aside][arow][acol]
 
@@ -43,6 +45,7 @@ class Solver():
         self.forms.append(form)
 
     def __alignFaces(self):
+        # aligns the cube such that green is facing the screen (outwards) and yellow is facing upwards
         if(self.faces[1][1][1] == "G"):
             self.__move("y")
         elif(self.faces[2][1][1] == "G"):
@@ -62,6 +65,7 @@ class Solver():
 
     def __baseCross(self):
         # G O B R
+        # find best slot/orientation to use rather than forcing it to a standard orientation
         t_slot = 0
         t_score = 0
         for i in range(4):
@@ -69,6 +73,7 @@ class Solver():
             if(score > t_score):
                 t_slot = i
                 t_score = score
+        # if score is 4 then all the white edges are correctly oriented but may not be properly aligned
         if(t_score == 4):
             if(t_slot == 1):
                 self.__move("D'")
@@ -80,28 +85,37 @@ class Solver():
         #  0
         # 3 1
         #  2
+        # find the color slot using the best parent (green as reference) slot
         slotToColorMap = {"G": (0 + t_slot) % 4, "O": (1 + t_slot) % 4, "B": (2 + t_slot) % 4, "R": (3 + t_slot) % 4}
+        # global slot to local perspective
         slot_to_persp = [[0, 1, 2, 3], [3, 0, 1, 2], [2, 3, 0, 1], [1, 2, 3, 0]]
-        target = ""
-        target_other = ""
-        target_persp = ""
+        possible_moves = []
+        # find all the edges and calculate the moves
         for persp in range(4):
             for pos in whiteEdgePairs.keys():
                 aside, arow, acol = pos
                 if(self.positionMapper(persp, aside, arow, acol) == "W"):
-                    target = pos
+                    # find the other color on this edge
                     target_other = whiteEdgePairs[pos]
-                    break
-            if(bool(target)):
-                target_persp = persp
-                break
-        if(bool(target)):
-            target_other_color = self.positionMapper(target_persp, target_other[0], target_other[1], target_other[2])
-            g_slot = slotToColorMap[target_other_color]
-            p_slot = slot_to_persp[target_persp][g_slot]
-            edgeMove = whiteEdgeDirectMoves[target][p_slot]
-            self.__move(self.moveMapper(target_persp, edgeMove))
+                    target_other_color = self.positionMapper(persp, target_other[0], target_other[1], target_other[2])
+                    # color to global slot
+                    g_slot = slotToColorMap[target_other_color]
+                    # global slot to perspective slot
+                    p_slot = slot_to_persp[persp][g_slot]
+                    # edge move for pos in perspective to perspective slot (as good as the global)
+                    edgeMove = whiteEdgeDirectMoves[pos][p_slot]
+                    # apply perspective edge move globally
+                    possible_moves.append(self.moveMapper(persp, edgeMove))
+        if(len(possible_moves) > 0):
+            # find the smallest move and apply it
+            smallest_move = ""
+            for move in possible_moves:
+                if(len(move) < len(smallest_move) or smallest_move == ""):
+                    smallest_move = move
+            self.__move(smallest_move)
         else:
+            # if no edge is found, then the miss-oriented edges are on the white face. So we check wrt the global slot
+            #  which edge is out of alignment and move it out of the white face
             if(self.positionMapper(t_slot, 0, 2, 1) != "G"):
                 self.__move(self.moveMapper(t_slot, "F2"))
             elif(self.positionMapper(t_slot, 1, 2, 1) != "O"):
@@ -110,6 +124,7 @@ class Solver():
                 self.__move(self.moveMapper(t_slot, "B2"))
             else:
                 self.__move(self.moveMapper(t_slot, "L2"))
+        # repeatedly call this function till all the edges are oriented correctly
         self.__baseCross()
 
     def __firstLayer(self):
