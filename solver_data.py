@@ -1,3 +1,4 @@
+# local perspective (for 0 - 3) moves to global moves
 movedata = {
     "R": ["R", "B", "L", "F"],
     "R'": ["R'", "B'", "L'", "F'"],
@@ -13,8 +14,9 @@ movedata = {
     "B'": ["B'", "L'", "F'", "R'"]
 }
 
+# local perspective (for 0 - 3) positions to global positions
 positionTransformData = [
-    # target (0 - 3 only)
+    # target
     [
         # sides
         [[(0, 0, 0), (0, 0, 1), (0, 0, 2)], [(0, 1, 0), (0, 1, 1), (0, 1, 2)], [(0, 2, 0), (0, 2, 1), (0, 2, 2)]],
@@ -50,6 +52,7 @@ positionTransformData = [
     ]
 ]
 
+# white edge - other color pairs
 whiteEdgePairs = {
     (0, 0, 1): (5, 2, 1),
     (0, 1, 2): (1, 1, 0),
@@ -61,7 +64,9 @@ whiteEdgePairs = {
     (5, 1, 0): (3, 0, 1)
 }
 
-# more efficient than the proper version as i removed redundant "D" moves in the end
+# moves for aligning the identified white edge to the correct global slot (if position is global), else local slot (if position is local) 
+# as long as the relative orientation is matching
+# more efficient than the proper version as i removed redundant "Dx" moves in the end
 whiteEdgeDirectMoves = {
     (0, 0, 1): ["FDR'", "FR'F'", "DF'LF", "F'LF"],
     (0, 1, 2): ["DR'", "R'", "D'R'", "F2LF2"],
@@ -73,6 +78,7 @@ whiteEdgeDirectMoves = {
     (5, 1, 0): ["U'F2", "U2R2", "UB2", "L2"]
 }
 
+# proper moves for the alignment (without removal of any redundant "Dx"s)
 whiteEdgeDirectMovesProper = {
     (0, 0, 1): ["FDR'D'", "FR'F'", "DF'LFD'", "F'LF"],
     (0, 1, 2): ["DR'D'", "R'", "D'R'D", "F2LF2"],
