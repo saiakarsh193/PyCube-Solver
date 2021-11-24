@@ -32,6 +32,9 @@ solver.solveCube()
 moves = solver.getMoves()
 for move in moves:
     print(move)
+# or for more detailed, decorated and condensed output
+moves = solver.getMoves(decorated=True)
+print(moves)
 ```
 _**Since its still under development, it does not totally solve the cube yet :(**_  
 
