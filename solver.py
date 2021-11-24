@@ -1,4 +1,5 @@
 from cube import Cube
+from helper import rawCondense
 from solver_data import movedata, positionTransformData, whiteEdgePairs, whiteEdgeDirectMoves
 
 class Solver():
@@ -8,22 +9,61 @@ class Solver():
         self.forms = []
 
     def solveCube(self, debug = False):
+        # applying each part of the algorithm step by step
+        # if debug is set to True, it prints the cube before and after applying the algorithm
         if(debug):
             print("Before:")
             print(self.cube)
+        self.forms.append("--align--")
         self.__alignFaces()
+        self.forms.append("--base--")
         self.__baseCross()
+        self.forms.append("--first--")
         self.__firstLayer()
         if(debug):
             print("After:")
             print(self.cube)
         return True
     
-    def getMoves(self):
-        return self.forms
+    def getMoves(self, decorated = False):
+        # get the moves that have been applied till now
+        if(decorated):
+            current = -1
+            alignmentMoves = ""
+            baseCrossMoves = ""
+            firstLayerMoves = ""
+            for form in self.forms:
+                if(form == "--align--"):
+                    current = 0
+                elif(form == "--base--"):
+                    current = 1
+                elif(form == "--first--"):
+                    current = 2
+                else:
+                    if(current == 0):
+                        alignmentMoves += form
+                    elif(current == 1):
+                        baseCrossMoves += form
+                    elif(current == 2):
+                        firstLayerMoves += form
+            moves = ""
+            if(bool(alignmentMoves)):
+                moves += "For alignment: " + rawCondense(alignmentMoves) + "\n"
+            if(bool(baseCrossMoves)):
+                moves += "For base white cross: " + rawCondense(baseCrossMoves) + "\n"
+            if(bool(alignmentMoves)):
+                moves += "For first layer: " + rawCondense(firstLayerMoves) + "\n"
+            moves = moves.strip()
+            return moves
+        else:
+            moves = []
+            for form in self.forms:
+                if(form != "--align--" and form != "--base--" and form != "--first--"):
+                    moves.append(form)
+            return moves
 
     def moveMapper(self, side, form):
-        # flexible moves mapper from local perspective to global perspective
+        # flexible moves-mapper from local perspective to global perspective
         moves = []
         for ch in form:
             if(ch.isalpha() or ch.isdigit()):
@@ -41,6 +81,7 @@ class Solver():
         return self.faces[aside][arow][acol]
 
     def __move(self, form):
+        # applying moves to the cube and then storing it in a list
         self.cube.doMoves(form)
         self.forms.append(form)
 
