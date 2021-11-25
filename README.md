@@ -42,7 +42,7 @@ _**Since its still under development, it does not totally solve the cube yet :(*
 
 ### Notation  
 There are rules and methods that need to be followed in order to use the program. 
-- The moves in a rubik's cube are defines as follows, (**Note: ** The picture shows the front face as Blue, but the code uses Green as the front face. But the idea remains the same)  
+- The moves in a rubik's cube are defines as follows, (_**Note:** The picture shows the front face as Blue, but the code uses Green as the front face. But the idea remains the same_)  
   <img src="https://jperm.net/images/notation.png" alt="Rubik's Cube Moves" style="width: 400px;"/>  
 - The cube printing format is defined as  
   ```
