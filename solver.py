@@ -1,6 +1,6 @@
 from cube import Cube
 from helper import rawCondense
-from solver_data import movedata, positionTransformData, whiteEdgePairs, whiteEdgeDirectMoves
+from solver_data import movedata, positionTransformData, whiteEdgePairs, whiteEdgeDirectMoves, LyreLookUpSystem
 
 class Solver():
     def __init__(self, cube):
@@ -19,6 +19,9 @@ class Solver():
         self.forms.append("--base--")
         self.__baseCross()
         self.forms.append("--first--")
+        self.__firstLayer()
+        self.__firstLayer()
+        self.__firstLayer()
         self.__firstLayer()
         if(debug):
             print("After:")
@@ -51,7 +54,7 @@ class Solver():
                 moves += "For alignment: " + rawCondense(alignmentMoves) + "\n"
             if(bool(baseCrossMoves)):
                 moves += "For base white cross: " + rawCondense(baseCrossMoves) + "\n"
-            if(bool(alignmentMoves)):
+            if(bool(firstLayerMoves)):
                 moves += "For first layer: " + rawCondense(firstLayerMoves) + "\n"
             moves = moves.strip()
             return moves
@@ -86,8 +89,9 @@ class Solver():
 
     def __move(self, form):
         # applying moves to the cube and then storing it in a list
-        self.cube.doMoves(form)
-        self.forms.append(form)
+        if(bool(form)):
+            self.cube.doMoves(form)
+            self.forms.append(form)
 
     def __alignFaces(self):
         # aligns the cube such that green is facing the screen (outwards) and yellow is facing upwards
@@ -171,5 +175,123 @@ class Solver():
         # repeatedly call this function till all the edges are oriented correctly
         self.__baseCross()
 
+    def __getf2lMove(self, section, attrib_corner, attrib_edge, attrib_dist_sign=None, attrib_dist=None):
+        for f2lmove in LyreLookUpSystem["f2ldb"]:
+            if(f2lmove[0] == section):
+                if(section == "1a" and f2lmove[1] == attrib_corner and f2lmove[2] == attrib_edge and f2lmove[3] == attrib_dist_sign and f2lmove[4] == attrib_dist):
+                    return f2lmove[5]
+                if(section == "1b1" and f2lmove[1] == attrib_corner and f2lmove[2] == attrib_edge):
+                    return f2lmove[3]
+        return ""
+
+    def __getCornerDetailBreakdown(self, c0, c1, c2):
+        if(c0 == "W"):
+            cx = 0
+            e0 = c1
+            e1 = c2
+        elif(c1 == "W"):
+            cx = 1
+            e0 = c0
+            e1 = c2
+        else:
+            cx = 2
+            e0 = c0
+            e1 = c1
+        if((e0 == "G" and e1 == "O") or (e0 == "O" and e1 == "G")):
+            face2 = 0
+        elif((e0 == "O" and e1 == "B") or (e0 == "B" and e1 == "O")):
+            face2 = 1
+        elif((e0 == "B" and e1 == "R") or (e0 == "R" and e1 == "B")):
+            face2 = 2
+        else:
+            face2 = 3
+        return cx, e0, e1, face2
+
     def __firstLayer(self):
-        return
+        # trying to find a corner-edge pair
+        for corner in LyreLookUpSystem["corners"]:
+            c0 = self.positionMapper(0, corner[0])
+            c1 = self.positionMapper(0, corner[1])
+            c2 = self.positionMapper(0, corner[2])
+            if(c0 == "W" or c1 == "W" or c2 == "W"):
+                cx, e0, e1, face2 = self.__getCornerDetailBreakdown(c0, c1, c2)
+                # orienting the corner and front face properly
+                face2_to_corner = [5, 3, 1, 7]
+                diff = int((face2_to_corner[face2] - corner[3]) / 2) % 4
+                diff_to_move = {0: "", 1: "U", 2: "U2", 3: "U'"}
+                orient_move = [["", ""], ["y", "y'"], ["y2", "y2"], ["y'", "y"]]
+                # top row edges
+                for edge in LyreLookUpSystem["edges"]:
+                    te0 = self.positionMapper(0, edge[0])
+                    te1 = self.positionMapper(0, edge[1])
+                    if((te0 == e0 and te1 == e1) or (te0 == e1 and te1 == e0)):
+                        # found a corner-edge pair
+                        # attrib_corner: U means up, L means left, R means right
+                        attrib_corner = "U" if(corner[cx][0] == 5) else ("L" if corner[cx][2] == 0 else "R")
+                        attrib_edge = ""
+                        if(edge[0][0] == 5):
+                            top_col_edge = te0
+                        else:
+                            top_col_edge = te1
+                        # attrib_edge: E means same colors, X mean not same colors
+                        if(attrib_corner != "U"):
+                            if(c0 != "W" and corner[0][0] == 5):
+                                top_col_cor = c0
+                            elif(c1 != "W" and corner[1][0] == 5):
+                                top_col_cor = c1
+                            else:
+                                top_col_cor = c2
+                            attrib_edge = "E" if(top_col_edge == top_col_cor) else "X"
+                        else:
+                            if(c0 != "W" and corner[0][2] == 0):
+                                left_col_cor = c0
+                            elif(c1 != "W" and corner[1][2] == 0):
+                                left_col_cor = c1
+                            else: 
+                                left_col_cor = c2
+                            attrib_edge = "E" if(top_col_edge == left_col_cor) else "X"
+                        # attrib_dist: manhattan distance between edge and corner
+                        # attrib_dist_sign: 1 means clockwise corner to edge, 0 means anti-clockwise
+                        if(edge[2] >= corner[3]):
+                            attrib_dist = edge[2] - corner[3]
+                            if(8 - attrib_dist < attrib_dist):
+                                attrib_dist = 8 - attrib_dist
+                                attrib_dist_sign = 0
+                            else:
+                                attrib_dist_sign = 1
+                        else:
+                            attrib_dist = corner[3] - edge[2]
+                            if(8 - attrib_dist < attrib_dist):
+                                attrib_dist = 8 - attrib_dist
+                                attrib_dist_sign = 1
+                            else:
+                                attrib_dist_sign = 0
+                        self.__move(diff_to_move[diff])
+                        self.__move(orient_move[face2][0])
+                        self.__move(self.__getf2lMove("1a", attrib_corner, attrib_edge, attrib_dist_sign, attrib_dist))
+                        self.__move(orient_move[face2][1])
+                        return
+        # trying to find a corner-edge pair
+        for corner in LyreLookUpSystem["corners"]:
+            c0 = self.positionMapper(0, corner[0])
+            c1 = self.positionMapper(0, corner[1])
+            c2 = self.positionMapper(0, corner[2])
+            if(c0 == "W" or c1 == "W" or c2 == "W"):
+                cx, e0, e1, face2 = self.__getCornerDetailBreakdown(c0, c1, c2)
+                # orienting the corner and front face properly
+                face2_to_corner = [5, 3, 1, 7]
+                diff = int((face2_to_corner[face2] - corner[3]) / 2) % 4
+                diff_to_move = {0: "", 1: "U", 2: "U2", 3: "U'"}
+                orient_move = [["", ""], ["y", "y'"], ["y2", "y2"], ["y'", "y"]]
+                # middle row edges
+                for edge in LyreLookUpSystem["edges-mid"]:
+                    te0 = self.positionMapper(0, edge[0])
+                    te1 = self.positionMapper(0, edge[1])
+                    if(((te0 == e0 and te1 == e1) or (te0 == e1 and te1 == e0)) and ((te0 == self.faces[edge[0][0]][1][1] and te1 == self.faces[edge[1][0]][1][1]) or (te0 == self.faces[edge[1][0]][1][1] and te1 == self.faces[edge[0][0]][1][1]))):
+                        attrib_corner = "U" if(corner[cx][0] == 5) else ("L" if corner[cx][2] == 0 else "R")
+                        attrib_edge = "E" if (te0 == self.faces[edge[0][0]][1][1] and te1 == self.faces[edge[1][0]][1][1]) else "X"
+                        self.__move(diff_to_move[diff])
+                        self.__move(orient_move[face2][0])
+                        self.__move(self.__getf2lMove("1b1", attrib_corner, attrib_edge))
+                        self.__move(orient_move[face2][1])
+                        return
