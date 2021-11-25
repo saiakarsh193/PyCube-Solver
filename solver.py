@@ -75,8 +75,12 @@ class Solver():
                 moves[i] = movedata[moves[i]][side]
         return ''.join(moves)
 
-    def positionMapper(self, target, side, row, col):
+    def positionMapper(self, target, side, row=None, col=None):
         # position mapper that maps perspective local positions to global positions
+        if(type(side) is tuple):
+            row = side[1]
+            col = side[2]
+            side = side[0]
         aside, arow, acol = positionTransformData[target][side][row][col]
         return self.faces[aside][arow][acol]
 
@@ -134,11 +138,10 @@ class Solver():
         # find all the edges and calculate the moves
         for persp in range(4):
             for pos in whiteEdgePairs.keys():
-                aside, arow, acol = pos
-                if(self.positionMapper(persp, aside, arow, acol) == "W"):
+                if(self.positionMapper(persp, pos) == "W"):
                     # find the other color on this edge
                     target_other = whiteEdgePairs[pos]
-                    target_other_color = self.positionMapper(persp, target_other[0], target_other[1], target_other[2])
+                    target_other_color = self.positionMapper(persp, target_other)
                     # color to global slot
                     g_slot = slotToColorMap[target_other_color]
                     # global slot to perspective slot
