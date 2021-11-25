@@ -5,7 +5,7 @@
 Python program that models and solves a Rubik's cube (_as soon as the code is completed smh_) using the **CFOP** method.  
 Its currently under development.  
 **(CFOP : Cross, First two layers, Orientation of last layer, Permutation of last layer)**  
-First checkout the [notation](#notation) used in order to understand the output and input(aka **formulas**).  
+First checkout the [notation](#notation) to understand how rubik's cube notation (aka **formulas**) work and to understand the output.  
 To understand the code or to write your own version, read the brief [explanation](#how-does-it-work) given below.  
 
 Right now, the program can solve the cross (white as base) pretty efficiently.  
@@ -42,7 +42,7 @@ _**Since its still under development, it does not totally solve the cube yet :(*
 
 ### Notation  
 There are rules and methods that need to be followed in order to use the program. 
-- The moves in a rubik's cube are defines as follows,    
+- The moves in a rubik's cube are defines as follows, (**Note: ** The picture shows the front face as Blue, but the code uses Green as the front face. But the idea remains the same)  
   <img src="https://jperm.net/images/notation.png" alt="Rubik's Cube Moves" style="width: 400px;"/>  
 - The cube printing format is defined as  
   ```
