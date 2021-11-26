@@ -20,9 +20,6 @@ class Solver():
         self.__baseCross()
         self.forms.append("--first--")
         self.__firstLayer()
-        self.__firstLayer()
-        self.__firstLayer()
-        self.__firstLayer()
         if(debug):
             print("After:")
             print(self.cube)
@@ -180,7 +177,7 @@ class Solver():
             if(f2lmove[0] == section):
                 if(section == "1a" and f2lmove[1] == attrib_corner and f2lmove[2] == attrib_edge and f2lmove[3] == attrib_dist_sign and f2lmove[4] == attrib_dist):
                     return f2lmove[5]
-                if(section == "1b1" and f2lmove[1] == attrib_corner and f2lmove[2] == attrib_edge):
+                if((section == "1b1" or section == "1b2") and f2lmove[1] == attrib_corner and f2lmove[2] == attrib_edge):
                     return f2lmove[3]
         return ""
 
@@ -208,6 +205,23 @@ class Solver():
         return cx, e0, e1, face2
 
     def __firstLayer(self):
+        # conditions to check f2l completion
+        con1 = (self.faces[0][1][0] == self.faces[0][1][1] and self.faces[0][1][1] == self.faces[0][1][2] and 
+        self.faces[1][1][0] == self.faces[1][1][1] and self.faces[1][1][1] == self.faces[1][1][2] and
+        self.faces[2][1][0] == self.faces[2][1][1] and self.faces[2][1][1] == self.faces[2][1][2] and
+        self.faces[3][1][0] == self.faces[3][1][1] and self.faces[3][1][1] == self.faces[3][1][2])
+        con2 = (self.faces[0][2][0] == self.faces[0][2][1] and self.faces[0][2][1] == self.faces[0][2][2] and 
+        self.faces[1][2][0] == self.faces[1][2][1] and self.faces[1][2][1] == self.faces[1][2][2] and
+        self.faces[2][2][0] == self.faces[2][2][1] and self.faces[2][2][1] == self.faces[2][2][2] and
+        self.faces[3][2][0] == self.faces[3][2][1] and self.faces[3][2][1] == self.faces[3][2][2])
+        con3 = (self.faces[0][1][1] == self.faces[0][2][1] and self.faces[1][1][1] == self.faces[1][2][1] and
+        self.faces[2][1][1] == self.faces[2][2][1] and self.faces[3][1][1] == self.faces[3][2][1])
+        con4 = (self.faces[4][1][1] == self.faces[4][0][0] and self.faces[4][1][1] == self.faces[4][0][2] and
+        self.faces[4][1][1] == self.faces[4][2][0] and self.faces[4][1][1] == self.faces[4][2][2])
+        if(con1 and con2 and con3 and con4):
+            return
+        found = False
+        # f2l 1a
         # trying to find a corner-edge pair
         for corner in LyreLookUpSystem["corners"]:
             c0 = self.positionMapper(0, corner[0])
@@ -270,28 +284,107 @@ class Solver():
                         self.__move(orient_move[face2][0])
                         self.__move(self.__getf2lMove("1a", attrib_corner, attrib_edge, attrib_dist_sign, attrib_dist))
                         self.__move(orient_move[face2][1])
-                        return
-        # trying to find a corner-edge pair
-        for corner in LyreLookUpSystem["corners"]:
-            c0 = self.positionMapper(0, corner[0])
-            c1 = self.positionMapper(0, corner[1])
-            c2 = self.positionMapper(0, corner[2])
-            if(c0 == "W" or c1 == "W" or c2 == "W"):
-                cx, e0, e1, face2 = self.__getCornerDetailBreakdown(c0, c1, c2)
-                # orienting the corner and front face properly
-                face2_to_corner = [5, 3, 1, 7]
-                diff = int((face2_to_corner[face2] - corner[3]) / 2) % 4
-                diff_to_move = {0: "", 1: "U", 2: "U2", 3: "U'"}
-                orient_move = [["", ""], ["y", "y'"], ["y2", "y2"], ["y'", "y"]]
-                # middle row edges
-                for edge in LyreLookUpSystem["edges-mid"]:
-                    te0 = self.positionMapper(0, edge[0])
-                    te1 = self.positionMapper(0, edge[1])
-                    if(((te0 == e0 and te1 == e1) or (te0 == e1 and te1 == e0)) and ((te0 == self.faces[edge[0][0]][1][1] and te1 == self.faces[edge[1][0]][1][1]) or (te0 == self.faces[edge[1][0]][1][1] and te1 == self.faces[edge[0][0]][1][1]))):
-                        attrib_corner = "U" if(corner[cx][0] == 5) else ("L" if corner[cx][2] == 0 else "R")
-                        attrib_edge = "E" if (te0 == self.faces[edge[0][0]][1][1] and te1 == self.faces[edge[1][0]][1][1]) else "X"
-                        self.__move(diff_to_move[diff])
-                        self.__move(orient_move[face2][0])
-                        self.__move(self.__getf2lMove("1b1", attrib_corner, attrib_edge))
-                        self.__move(orient_move[face2][1])
-                        return
+                        found = True
+                        break
+            if(found):
+                break
+        # f2l 1b1
+        if(not found):
+            # trying to find a corner-edge pair
+            for corner in LyreLookUpSystem["corners"]:
+                c0 = self.positionMapper(0, corner[0])
+                c1 = self.positionMapper(0, corner[1])
+                c2 = self.positionMapper(0, corner[2])
+                if(c0 == "W" or c1 == "W" or c2 == "W"):
+                    cx, e0, e1, face2 = self.__getCornerDetailBreakdown(c0, c1, c2)
+                    # orienting the corner and front face properly
+                    face2_to_corner = [5, 3, 1, 7]
+                    diff = int((face2_to_corner[face2] - corner[3]) / 2) % 4
+                    diff_to_move = {0: "", 1: "U", 2: "U2", 3: "U'"}
+                    orient_move = [["", ""], ["y", "y'"], ["y2", "y2"], ["y'", "y"]]
+                    # middle row edges
+                    for edge in LyreLookUpSystem["edges-mid"]:
+                        te0 = self.positionMapper(0, edge[0])
+                        te1 = self.positionMapper(0, edge[1])
+                        if(((te0 == e0 and te1 == e1) or (te0 == e1 and te1 == e0)) and ((te0 == self.faces[edge[0][0]][1][1] and te1 == self.faces[edge[1][0]][1][1]) or (te0 == self.faces[edge[1][0]][1][1] and te1 == self.faces[edge[0][0]][1][1]))):
+                            attrib_corner = "U" if(corner[cx][0] == 5) else ("L" if corner[cx][2] == 0 else "R")
+                            attrib_edge = "E" if (te0 == self.faces[edge[0][0]][1][1] and te1 == self.faces[edge[1][0]][1][1]) else "X"
+                            self.__move(diff_to_move[diff])
+                            self.__move(orient_move[face2][0])
+                            self.__move(self.__getf2lMove("1b1", attrib_corner, attrib_edge))
+                            self.__move(orient_move[face2][1])
+                            found = True
+                            break
+                if(found):
+                    break
+        # f2l 1b2
+        if(not found):
+            # trying to find a corner-edge pair
+            for corner in LyreLookUpSystem["corners-down"]:
+                c0 = self.positionMapper(0, corner[0])
+                c1 = self.positionMapper(0, corner[1])
+                c2 = self.positionMapper(0, corner[2])
+                if(self.faces[corner[0][0]][1][1] in [c0, c1, c2] and self.faces[corner[1][0]][1][1] in [c0, c1, c2] and self.faces[corner[2][0]][1][1] in [c0, c1, c2]):
+                    cx, e0, e1, face2 = self.__getCornerDetailBreakdown(c0, c1, c2)
+                    if(self.faces[face2][1][1] == self.faces[face2][1][2] and self.faces[(face2 + 1) % 4][1][0] == self.faces[(face2 + 1) % 4][1][1]):
+                        continue
+                    # orienting the corner and front face properly
+                    orient_move = [["", ""], ["y", "y'"], ["y2", "y2"], ["y'", "y"]]
+                    # # top row edges
+                    for edge in LyreLookUpSystem["edges"]:
+                        te0 = self.positionMapper(0, edge[0])
+                        te1 = self.positionMapper(0, edge[1])
+                        if((te0 == e0 and te1 == e1) or (te0 == e1 and te1 == e0)):
+                            down_color, down_face = (te0, edge[0][0]) if(edge[0][0] != 5) else (te1, edge[1][0])
+                            color_to_face2 = {"G": 0, "O": 1, "B": 2, "R": 3}
+                            diff = down_face - color_to_face2[down_color]
+                            diff_to_move = {0: "", 1: "U", 2: "U2", 3: "U'", -1: "U'", -2: "U2", -3: "U"}
+                            rl_map_face2 = [[0, 1], [1, 2], [2, 3], [3, 0]]
+                            attrib_corner = "D" if(corner[cx][0] == 4) else ("L" if corner[cx][2] == 0 else "R")
+                            attrib_edge = "L" if(rl_map_face2[face2][0] == color_to_face2[down_color]) else "R"
+                            self.__move(orient_move[face2][0])
+                            self.__move(diff_to_move[diff])
+                            self.__move(self.__getf2lMove("1b2", attrib_corner, attrib_edge))
+                            self.__move(orient_move[face2][1])
+                            found = True
+                            break
+                if(found):
+                    break
+        # non standard cases
+        if(not found):
+            # if no possible standard case is found, then the corners and edges need to be moved around
+            # so we move the unsolved corners using a score system, which rates the shorter moves and moves which form pairs with higher score
+            fmoves = []
+            for i in range(4):
+                con1 = self.positionMapper(i, 0, 1, 2) == self.positionMapper(i, 0, 2, 2) and self.positionMapper(i, 1, 1, 0) == self.positionMapper(i, 1, 2, 0) and self.positionMapper(i, 4, 0, 2) == "W"
+                con2 = self.positionMapper(i, 0, 1, 1) == self.positionMapper(i, 0, 1, 2) and self.positionMapper(i, 1, 1, 0) == self.positionMapper(i, 1, 1, 1)
+                corvd = [self.positionMapper(i, 0, 2, 2), self.positionMapper(i, 1, 2, 0), self.positionMapper(i, 4, 0, 2)]
+                corvu = [self.positionMapper(i, 0, 0, 2), self.positionMapper(i, 1, 0, 0), self.positionMapper(i, 5, 2, 2)]
+                if(con1 and con2):
+                    continue
+                if(con1 and not con2):
+                    fmoves.append([10, self.moveMapper(i, "RUR'")])
+                if("W" in corvd):
+                    if(self.positionMapper(i, 0, 0, 1) in corvd and self.positionMapper(i, 5, 2, 1) in corvd):
+                        fmoves.append([6, self.moveMapper(i, "URU'R'")])
+                    fmoves.append([4, self.moveMapper(i, "RU'R'")])
+                if("W" in corvu):
+                    if(self.positionMapper(i, 0, 1, 2) in corvu and self.positionMapper(i, 1, 1, 0) in corvu):
+                        if(self.positionMapper(i, 0, 0, 2) == "W"):
+                            if(self.positionMapper(i, 5, 2, 2) == self.positionMapper(i, 0, 1, 2)):
+                                fmoves.append([8, self.moveMapper(i, "U'RU'R'")])
+                            else:
+                                fmoves.append([8, self.moveMapper(i, "U2RUR'")])
+                        elif(self.positionMapper(i, 1, 0, 0) == "W"):
+                            if(self.positionMapper(i, 5, 2, 2) == self.positionMapper(i, 0, 1, 2)):
+                                fmoves.append([8, self.moveMapper((i + 1) % 4, "U2L'U'L")])
+                            else:
+                                fmoves.append([8, self.moveMapper((i + 1) % 4, "UL'UL")])
+                        else:
+                            if(self.positionMapper(i, 0, 0, 2) == self.positionMapper(i, 0, 1, 2)):
+                                fmoves.append([9, self.moveMapper(i, "RU'R'")])
+                            else:
+                                fmoves.append([4, self.moveMapper(i, "U'RUR'")])
+            fmoves = sorted(fmoves, key=lambda x: -x[0])
+            self.__move(fmoves[0][1])
+        self.__firstLayer()
