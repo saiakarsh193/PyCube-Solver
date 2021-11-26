@@ -385,6 +385,7 @@ class Solver():
                                 fmoves.append([9, self.moveMapper(i, "RU'R'")])
                             else:
                                 fmoves.append([4, self.moveMapper(i, "U'RUR'")])
+                fmoves.append([1, self.moveMapper(i, "RU'R'")])
             fmoves = sorted(fmoves, key=lambda x: -x[0])
             self.__move(fmoves[0][1])
         self.__firstLayer()
