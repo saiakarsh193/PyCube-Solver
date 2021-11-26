@@ -2,13 +2,14 @@
 ## Sai Akarsh (17-09-21)  
 
 ### Description  
-Python program that models and solves a Rubik's cube (_as soon as the code is completed smh_) using the **CFOP** method.  
-Its currently under development.  
+Python program that models and solves a Rubik's cube using the **CFOP** method.  
 **(CFOP : Cross, First two layers, Orientation of last layer, Permutation of last layer)**  
+
 First checkout the [notation](#notation) to understand how rubik's cube notation (aka **formulas**) work and to understand the output.  
 To understand the code or to write your own version, read the brief [explanation](#how-does-it-work) given below.  
 
-Right now, the program can solve the cross (white as base) pretty efficiently.  
+**The coding is not completed yet.**  
+Right now, the program can solve the cross (white as base) pretty efficiently and also the first two layers of the cube.  
 
 The code for cube manipulation can be found in `cube.py`.  
 The parsing, condenstion and validation for formulas can be found in `helper.py`.  
@@ -75,6 +76,6 @@ Creating this algorithm is not as hard as it sounds, but rather time taking and 
   Due to this, i needed to come up with a clever technique to tackle the inefficiency. One major upgrade is the changing of perspectives from global to local. This will save us a ton of code and will reduce the cases. The other is flexible base orientation, where we do not first fix the edge alignment but rather give importance to edge orientation. Depending on the best orientation and the corresponding slot available, we can use a predefined set of formulas to orient the edges and in the end align the edges. This method reduces the average number of moves to solve the cross to around 10.  
 - The second part is to solve the first layer simulatenously along with the second layer, and hence is called the F2L (first two layers). This way of solving the two layers is complicated and requires a lot of intuition. One easy work around is to simply use the beginners method where we solve the two layers individually and the whole process is algorithmic. Hence it is much easier to code (with an added bonus that it has only 3 formulas to code up). But as you might have guessed, it is rather inefficient.  
   
-  So to reduce the number of steps, we use the concept of F2L. If we break down all the possible combinations with color variability, it turns out there are only 41 cases. In a real solve, we do not remember all the cases but rather intuitively reduce most cases to easily solvable ones. But if we do want, there are formulas for each of these cases. So, rather than intuition we can now use the formulas for each of these cases. Now the task is pattern recognition, meaning how to determine which formula to apply (given it is color variable). The simple method is to find some kind of orientation dependant hash and then compare the hashes to get the formula. Another challenge is the wide variety of cases and scenarios present. Once we figure out hashes for the many scenarios present, then its pretty straight forward to apply. Read this [document](https://pdfhost.io/v/UY8Pyjh9i_F2L) for the F2L cases and scenarios.  
+  So to reduce the number of steps, we use the concept of F2L. If we break down all the possible combinations with color variability, it turns out there are only 41 cases. In a real solve, we do not remember all the cases but rather intuitively reduce most cases to easily solvable ones. But if we do want, there are formulas for each of these cases. So, rather than intuition we can now use the formulas for each of these cases. Now the task is pattern recognition, meaning how to determine which formula to apply (given it is color variable). The simple method is to find some kind of orientation dependant hash and then compare the hashes to get the formula. Another challenge is the wide variety of cases and scenarios present. Once we figure out hashes for the many scenarios present, then its pretty straight forward to apply. The last problem is to fix non standard cases. I tackled this by using a scoring system, where the moves (to convert non standard to standard) which are shorter and pair up corner-edge are given more score. Read this [document](https://pdfhost.io/v/UY8Pyjh9i_F2L) for the F2L cases and scenarios.  
 - The third step is orientation of the last layer (OLL). Read this [document](https://pdfhost.io/v/uHaTDhPfj_OLL) for the OLL cases.  
 - The fourth and final step is permutation of the last layer (PLL). Read this [document](https://pdfhost.io/v/pNbEJOVfg_PLL) for the PLL cases.  
