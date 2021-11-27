@@ -27,10 +27,10 @@ positionTransformData = [
         [[(5, 0, 0), (5, 0, 1), (5, 0, 2)], [(5, 1, 0), (5, 1, 1), (5, 1, 2)], [(5, 2, 0), (5, 2, 1), (5, 2, 2)]]
     ],
     [
-        [[(1, 0, 0), (1, 0, 1), (0, 0, 2)], [(1, 1, 0), (1, 1, 1), (1, 1, 2)], [(1, 2, 0), (1, 2, 1), (1, 2, 2)]],
-        [[(2, 0, 0), (2, 0, 1), (1, 0, 2)], [(2, 1, 0), (2, 1, 1), (2, 1, 2)], [(2, 2, 0), (2, 2, 1), (2, 2, 2)]],
-        [[(3, 0, 0), (3, 0, 1), (2, 0, 2)], [(3, 1, 0), (3, 1, 1), (3, 1, 2)], [(3, 2, 0), (3, 2, 1), (3, 2, 2)]],
-        [[(0, 0, 0), (0, 0, 1), (3, 0, 2)], [(0, 1, 0), (0, 1, 1), (0, 1, 2)], [(0, 2, 0), (0, 2, 1), (0, 2, 2)]],
+        [[(1, 0, 0), (1, 0, 1), (1, 0, 2)], [(1, 1, 0), (1, 1, 1), (1, 1, 2)], [(1, 2, 0), (1, 2, 1), (1, 2, 2)]],
+        [[(2, 0, 0), (2, 0, 1), (2, 0, 2)], [(2, 1, 0), (2, 1, 1), (2, 1, 2)], [(2, 2, 0), (2, 2, 1), (2, 2, 2)]],
+        [[(3, 0, 0), (3, 0, 1), (3, 0, 2)], [(3, 1, 0), (3, 1, 1), (3, 1, 2)], [(3, 2, 0), (3, 2, 1), (3, 2, 2)]],
+        [[(0, 0, 0), (0, 0, 1), (0, 0, 2)], [(0, 1, 0), (0, 1, 1), (0, 1, 2)], [(0, 2, 0), (0, 2, 1), (0, 2, 2)]],
         [[(4, 0, 2), (4, 1, 2), (4, 2, 2)], [(4, 0, 1), (4, 1, 1), (4, 2, 1)], [(4, 0, 0), (4, 1, 0), (4, 2, 0)]],
         [[(5, 2, 0), (5, 1, 0), (5, 0, 0)], [(5, 2, 1), (5, 1, 1), (5, 0, 1)], [(5, 2, 2), (5, 1, 2), (5, 0, 2)]]
     ],
@@ -172,9 +172,76 @@ ScythePatternMatcher = {
         (3, 0, 2), (5, 2, 0), (5, 2, 1), (5, 2, 2), (1, 0, 0),
         (0, 0, 0), (0, 0, 1), (0, 0, 2)
     ],
+    # corners oriented
+    "xyx-xyxyx-yxyyx-xyyyx-xxx": "M'UMU2M'UM",
+    "xyx-xyxyx-xyyyx-xyxyx-xyx": "RUR'U'M'URU'Rw'",
+    # cross
+    "yxy-xxyxx-xyyyx-xxyxx-yxy": "RU2R'U'RUR'U'RU'R'",
+    "xxy-yxyxx-xyyyx-yxyxx-xxy": "RU2R2U'R2U'R2U2R",
+    "yxy-xxyxx-xyyyx-xyyyx-xxx": "R2D'RU2R'DRU2R",
+    "yxx-xxyyx-xyyyx-xxyyx-yxx": "RwUR'U'Rw'FRF'",
+    "xxx-yxyyx-xyyyx-xyyxx-xxy": "F'RwUR'U'Rw'FR",
+    "xxx-yxyyx-xyyyx-xxyxy-yxx": "RU2R'U'RU'R'",
+    "yxx-xxyxy-xyyyx-xyyxx-xxy": "RUR'URU2R'",
+    # dot
+    "xyx-xyxyx-yxyxy-xyxyx-xyx": "Rw'RURUR'U'Rw2R'2URU'Rw'",
+    "yyx-xxxxy-yxyxy-yxxyx-xyx": "FwRUR'U'Fw'U'FRUR'U'F'",
+    "xyx-yxxyx-yxyxy-xxxxy-yyx": "FwRUR'U'Fw'UFRUR'U'F'",
+    "xyy-xyxxx-yxyxy-yxxyx-xyx": "RUR'UR'FRF'U2R'FRF'",
+    "xyx-xyxyx-yxyxy-yxxxy-xyx": "Rw'RURUR'U'RwxR'2URU'x'",
+    "yyy-xxxxx-yxyxy-xyxyx-xyx": "FRUR'Uy'R'U2R'FRF'",
+    "xyy-yxxxx-yxyxy-yxxxx-xyy": "FRUR'U'SRUR'U'Fw'",
+    "xyx-yxxxy-yxyxy-yxxxy-xyx": "RU2R'2FRF'U'2R'FRF'",
+    # T
+    "yyx-xxxyx-xyyyx-xxxyx-yyx": "RUR'U'R'FRF'",
+    "xyx-yxxyx-xyyyx-yxxyx-xyx": "FRUR'U'F'",
+    # P
+    "xyx-yxxyx-yxyyx-yxyyx-xxx": "FwRUR'U'Fw'",
+    "xyx-xyxxy-xyyxy-xyyxy-xxx": "Fw'L'U'LUFw",
+    "yyx-xxxyx-yxyyx-xxyyx-yxx": "RDwL'Dw'R'ULwULw'",
+    "yxx-xxyyx-yxyyx-xxxyx-yyx": "R'U'FURU'R'F'R",
+    # W
+    "yxx-xxyyx-xyyxy-xyxxy-xyx": "RUR'URU'R'U'R'FRF",
+    "xxy-xyyxx-yxyyx-yxxyx-xyx": "L'U'LU'L'ULULF'L'F",
+    # L
+    "xxx-yxyxy-yxyyx-yxxxy-xyx": "RwUR'URU'R'URU'2Rw'",
+    "xyx-yxxxy-yxyyx-yxyxy-xxx": "Rw'U'RU'R'URU'R'U2Rw",
+    "xyy-yxxxx-yxyyx-yxyxx-xxy": "RB'RBR'2U2FR'F'R",
+    "xxy-yxyxx-yxyyx-yxxxx-xyy": "R'FR'F'R2U2yR'FRF'",
+    "xxy-yxyxx-xyyxy-yxxxx-xyy": "FRUR'U'RUR'U'F'",
+    "yxx-xxyxy-yxyyx-xxxxy-yyx": "F'L'U'LUL'U'LUF",
+    # big lightning bolts
+    "yyx-xxxyx-xyyyx-xyxxy-xyx": "LF'L'U'LUFU'L'",
+    "xyy-xyxxx-xyyyx-yxxyx-xyx": "R'FRUR'U'F'UR",
+    # C
+    "xyx-yxxxy-xyyyx-xyxyx-xyx": "RUR'2U'R'FRURU'F'",
+    "xxx-xyyxy-yxyxy-xyyxy-xxx": "R'U'R'FRF'UR",
+    # Squares
+    "yyx-xxxxy-yxyyx-yxyyx-xxx": "Rw'U2RUR'URw",
+    "xxx-yxyyx-yxyyx-xxxxy-yyx": "RwU2R'U'RU'Rw'",
+    # small lightning bolts
+    "yxx-xxyxy-xyyxy-xyxxx-xyy": "RwUR'URU2Rw'",
+    "xyy-yxxxx-xyyxy-xxyyx-yxx": "MU2R'U'RU'R'U2RUM'",
+    "xyy-xyxxx-xyyxy-xxyxy-yxx": "Rw'U'RU'R'U2Rw",
+    "yyx-xxxxy-yxyyx-xyyxx-xxy": "Rw'R2UR'URU2R'UM'",
+    # fish
+    "xxx-xyyxy-xyyxy-xxxyx-yyx": "FRU'R'U'RUR'F'",
+    "xyx-xyxxy-yxyyx-xxyyx-yxx": "RU2R2FRF'RU2R'",
+    "yyx-xxxyx-xyyxy-yxyxx-xxy": "RUR'UR'FRF'RU2R'",
+    "xxy-yxyxx-xyyxy-xxxyx-yyx": "RUR'U'R'FR2UR'U'F'",
+    # I
+    "xyy-yxxxx-xyyyx-yxxxx-xyy": "FwRUR'U'RUR'U'Fw'",
+    "yxx-xxyxy-yxyxy-xxyxy-yxx": "RUR'URDw'RU'R'F'",
+    "yxy-xxyxx-yxyxy-xxyxx-yxy": "FwRUR'U'Fw'FRUR'U'RUR'U'F'",
+    "xxx-yxyxy-yxyxy-yxyxy-xxx": "RU2R2U'RU'R'U2FRF'",
     # knight moves
-    "yyx-xxxxy-xyyyx-xyxxx-xyy": "rU'r'U'rUr'y'R'UR",
-    "xyx-yxxyx-xyyyx-xxxxy-yyx": "rUr'RUR'U'rU'r'",
+    "yyx-xxxxy-xyyyx-xyxxx-xyy": "RwU'Rw'U'RwURw'y'R'UR",
+    "xyx-yxxyx-xyyyx-xxxxy-yyx": "RwURw'RUR'U'RwU'Rw'",
     "xyy-yxxxx-xyyyx-xxxyx-yyx": "R'FRUR'F'Ry'RU'R'",
-    "xyx-xyxxy-xyyyx-yxxxx-xyy": "l'U'lL'U'LUl'Ul"
+    "xyx-xyxxy-xyyyx-yxxxx-xyy": "Lw'U'LwL'U'LULw'ULw",
+    # awkward
+    "xyx-xyxyx-yxyyx-xxyxx-yxy": "RU'R'U2RUyRU'R'U'F'",
+    "xyx-xyxyx-yxyyx-yxyxy-xxx": "R'2UR'B'RU'R'2ULwULw'",
+    "xyx-xyxyx-xyyxy-xxyxx-yxy": "L'ULU'2L'U'y'L'ULUF",
+    "xyx-xyxyx-xyyxy-yxyxy-xxx": "L2U'LBL'UL2U'Rw'U'Rw"
 }
