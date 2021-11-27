@@ -101,7 +101,7 @@ def isValid(form):
     """
     level = 0
     valid = True
-    validAlpha = ['U', 'D', 'R', 'L', 'F', 'B', 'E', 'M', 'S', 'x', 'y', 'z', 'u', 'd', 'r', 'l', 'f', 'b']
+    validAlpha = ['U', 'D', 'R', 'L', 'F', 'B', 'E', 'M', 'S', 'x', 'y', 'z', 'u', 'd', 'r', 'l', 'f', 'b', 'w']
     boolAlpha = False
     boolPrime = False
     boolDec = False
