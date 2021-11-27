@@ -1,6 +1,6 @@
 from cube import Cube
 from helper import rawCondense
-from solver_data import movedata, positionTransformData, whiteEdgePairs, whiteEdgeDirectMoves, LyreLookUpSystem
+from solver_data import movedata, positionTransformData, whiteEdgePairs, whiteEdgeDirectMoves, LyreLookUpSystem, ScythePatternMatcher
 
 class Solver():
     def __init__(self, cube):
@@ -20,6 +20,8 @@ class Solver():
         self.__baseCross()
         self.forms.append("--first--")
         self.__firstLayer()
+        self.forms.append("--oll--")
+        self.__oll()
         if(debug):
             print("After:")
             print(self.cube)
@@ -32,6 +34,7 @@ class Solver():
             alignmentMoves = ""
             baseCrossMoves = ""
             firstLayerMoves = ""
+            ollMoves = ""
             for form in self.forms:
                 if(form == "--align--"):
                     current = 0
@@ -39,6 +42,8 @@ class Solver():
                     current = 1
                 elif(form == "--first--"):
                     current = 2
+                elif(form == "--oll--"):
+                    current = 3
                 else:
                     if(current == 0):
                         alignmentMoves += form
@@ -46,6 +51,8 @@ class Solver():
                         baseCrossMoves += form
                     elif(current == 2):
                         firstLayerMoves += form
+                    elif(current == 3):
+                        ollMoves += form
             moves = ""
             if(bool(alignmentMoves)):
                 moves += "For alignment: " + rawCondense(alignmentMoves) + "\n"
@@ -53,12 +60,14 @@ class Solver():
                 moves += "For base white cross: " + rawCondense(baseCrossMoves) + "\n"
             if(bool(firstLayerMoves)):
                 moves += "For first layer: " + rawCondense(firstLayerMoves) + "\n"
+            if(bool(ollMoves)):
+                moves += "For OLL: " + rawCondense(ollMoves) + "\n"
             moves = moves.strip()
             return moves
         else:
             moves = []
             for form in self.forms:
-                if(form != "--align--" and form != "--base--" and form != "--first--"):
+                if(form != "--align--" and form != "--base--" and form != "--first--" and form != "--oll--"):
                     moves.append(form)
             return moves
 
@@ -389,3 +398,29 @@ class Solver():
             fmoves = sorted(fmoves, key=lambda x: -x[0])
             self.__move(fmoves[0][1])
         self.__firstLayer()
+
+    def __ollhash(self, values):
+        shash = ""
+        for val in values:
+            if(val == "Y"):
+                shash += "y"
+            else:
+                shash += "x"
+        shash = shash[0: 3] + "-" + shash[3: 8] + "-" + shash[8: 13] + "-" + shash[13: 18] + "-" + shash[18: 21]
+        if(shash in ScythePatternMatcher):
+            return ScythePatternMatcher[shash]
+        else:
+            return None
+
+    def __oll(self):
+        for i in range(4):
+            ocols = []
+            for pos in ScythePatternMatcher["target"]:
+                ocols.append(self.positionMapper(i, pos))
+            form = self.__ollhash(ocols)
+            if(bool(form)):
+                facemap = ["", "y", "y2", "y'"]
+                # self.__move(self.moveMapper(i, form))
+                self.__move(facemap[i])
+                self.__move(form)
+                break
