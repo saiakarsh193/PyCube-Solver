@@ -8,9 +8,6 @@ Python program that models and solves a Rubik's cube using the **CFOP** method.
 First checkout the [notation](#notation) to understand how rubik's cube notation (aka **formulas**) work and to understand the output.  
 To understand the code or to write your own version, read the brief [explanation](#how-does-it-work) given below.  
 
-**The coding is not completed yet.**  
-Right now, the program can solve the cross (white as base), F2L and OLL.  
-
 The code for cube manipulation can be found in `cube.py`.  
 The parsing, condenstion and validation for formulas can be found in `helper.py`.  
 
@@ -39,7 +36,6 @@ for move in moves:
 moves = solver.getMoves(decorated=True)
 print(moves)
 ```
-_**Since its still under development, it does not totally solve the cube yet :(**_  
 
 ### Notation  
 There are rules and methods that need to be followed in order to use the program. 
@@ -80,4 +76,4 @@ Creating this algorithm is not as hard as it sounds, but rather time taking and 
   
   So to reduce the number of steps, we use the concept of F2L. If we break down all the possible combinations with color variability, it turns out there are only 41 cases. In a real solve, we do not remember all the cases but rather intuitively reduce most cases to easily solvable ones. But if we do want, there are formulas for each of these cases. So, rather than intuition we can now use the formulas for each of these cases. Now the task is pattern recognition, meaning how to determine which formula to apply (given it is color variable). The simple method is to find some kind of orientation dependant hash and then compare the hashes to get the formula. Another challenge is the wide variety of cases and scenarios present. Once we figure out hashes for the many scenarios present, then its pretty straight forward to apply. The last problem is to fix non standard cases. I tackled this by using a scoring system, where the moves (to convert non standard to standard) which are shorter and pair up corner-edge are given more score. Read this [document](https://pdfhost.io/v/UY8Pyjh9i_F2L) for the F2L cases and scenarios.  
 - The third step is orientation of the last layer (OLL). At this point it is very straight forward and easy but labour intensive. The actual code to implement this takes 5 minutes but to write down formulas for each of the cases (and make it into a dictionary) takes a lot of time. Simply put, we convert the orientation of yellow positions on the top layer into a hash string and use that to look up in the oll dictionary that we made by hashing the standard cases similarly. Thats it!. Read this [document](https://jperm.net/algs/oll) for the OLL cases.  
-- The fourth and final step is permutation of the last layer (PLL). Read this [document](https://pdfhost.io/v/pNbEJOVfg_PLL) for the PLL cases.  
+- The fourth and final step is permutation of the last layer (PLL). This step is very similar to the previous step. I used a color independant orientation based technique to identify the cases. My method is brute force (to enable color independence) rather than implementing a color independent hash. Since the compare cases are few, this wont affect the speed much. Read this [document](https://pdfhost.io/v/pNbEJOVfg_PLL) for the PLL cases.  
