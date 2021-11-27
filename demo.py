@@ -8,12 +8,15 @@ cb = Cube()
 # cb.doMoves("RUR'U'")
 
 # to auto scramble the cube
-cb.doMoves(getScramble(10))
+scramble = getScramble(10)
+scramble = "FR'L2F2L2"
+print("Scramble:", scramble)
+cb.doMoves(scramble)
 
 print(cb)
 
 solver = Solver(cb)
-solver.solveCube()
+solver.solveCube(optimize=True)
 
 # to get raw moves uncomment the following
 # moves = solver.getMoves()

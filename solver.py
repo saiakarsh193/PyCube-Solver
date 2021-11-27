@@ -8,9 +8,10 @@ class Solver():
         self.faces = self.cube.cube
         self.forms = []
 
-    def solveCube(self, debug = False):
+    def solveCube(self, debug = False, optimize = False):
         # applying each part of the algorithm step by step
         # if debug is set to True, it prints the cube before and after applying the algorithm
+        self.optimize = optimize
         if(debug):
             print("Before:")
             print(self.cube)
@@ -62,11 +63,11 @@ class Solver():
                         pllMoves += form
             moves = ""
             if(bool(alignmentMoves)):
-                moves += "For alignment: " + rawCondense(alignmentMoves) + "\n"
+                moves += "For Alignment: " + rawCondense(alignmentMoves) + "\n"
             if(bool(baseCrossMoves)):
-                moves += "For base white cross: " + rawCondense(baseCrossMoves) + "\n"
+                moves += "For Cross: " + rawCondense(baseCrossMoves) + "\n"
             if(bool(firstLayerMoves)):
-                moves += "For first layer: " + rawCondense(firstLayerMoves) + "\n"
+                moves += "For F2L: " + rawCondense(firstLayerMoves) + "\n"
             if(bool(ollMoves)):
                 moves += "For OLL: " + rawCondense(ollMoves) + "\n"
             if(bool(pllMoves)):
@@ -298,10 +299,13 @@ class Solver():
                                 attrib_dist_sign = 1
                             else:
                                 attrib_dist_sign = 0
-                        self.__move(diff_to_move[diff])
-                        self.__move(orient_move[face2][0])
-                        self.__move(self.__getf2lMove("1a", attrib_corner, attrib_edge, attrib_dist_sign, attrib_dist))
-                        self.__move(orient_move[face2][1])
+                        if(self.optimize):
+                            self.__move(self.moveMapper(face2, diff_to_move[diff] + self.__getf2lMove("1a", attrib_corner, attrib_edge, attrib_dist_sign, attrib_dist)))
+                        else:
+                            self.__move(diff_to_move[diff])
+                            self.__move(orient_move[face2][0])
+                            self.__move(self.__getf2lMove("1a", attrib_corner, attrib_edge, attrib_dist_sign, attrib_dist))
+                            self.__move(orient_move[face2][1])
                         found = True
                         break
             if(found):
@@ -327,10 +331,13 @@ class Solver():
                         if(((te0 == e0 and te1 == e1) or (te0 == e1 and te1 == e0)) and ((te0 == self.faces[edge[0][0]][1][1] and te1 == self.faces[edge[1][0]][1][1]) or (te0 == self.faces[edge[1][0]][1][1] and te1 == self.faces[edge[0][0]][1][1]))):
                             attrib_corner = "U" if(corner[cx][0] == 5) else ("L" if corner[cx][2] == 0 else "R")
                             attrib_edge = "E" if (te0 == self.faces[edge[0][0]][1][1] and te1 == self.faces[edge[1][0]][1][1]) else "X"
-                            self.__move(diff_to_move[diff])
-                            self.__move(orient_move[face2][0])
-                            self.__move(self.__getf2lMove("1b1", attrib_corner, attrib_edge))
-                            self.__move(orient_move[face2][1])
+                            if(self.optimize):
+                                self.__move(self.moveMapper(face2, diff_to_move[diff] + self.__getf2lMove("1b1", attrib_corner, attrib_edge)))
+                            else:
+                                self.__move(diff_to_move[diff])
+                                self.__move(orient_move[face2][0])
+                                self.__move(self.__getf2lMove("1b1", attrib_corner, attrib_edge))
+                                self.__move(orient_move[face2][1])
                             found = True
                             break
                 if(found):
@@ -360,10 +367,13 @@ class Solver():
                             rl_map_face2 = [[0, 1], [1, 2], [2, 3], [3, 0]]
                             attrib_corner = "D" if(corner[cx][0] == 4) else ("L" if corner[cx][2] == 0 else "R")
                             attrib_edge = "L" if(rl_map_face2[face2][0] == color_to_face2[down_color]) else "R"
-                            self.__move(orient_move[face2][0])
-                            self.__move(diff_to_move[diff])
-                            self.__move(self.__getf2lMove("1b2", attrib_corner, attrib_edge))
-                            self.__move(orient_move[face2][1])
+                            if(self.optimize):
+                                self.__move(self.moveMapper(face2, diff_to_move[diff] + self.__getf2lMove("1b2", attrib_corner, attrib_edge)))
+                            else:
+                                self.__move(orient_move[face2][0])
+                                self.__move(diff_to_move[diff])
+                                self.__move(self.__getf2lMove("1b2", attrib_corner, attrib_edge))
+                                self.__move(orient_move[face2][1])
                             found = True
                             break
                 if(found):
@@ -428,10 +438,12 @@ class Solver():
                 ocols.append(self.positionMapper(i, pos))
             form = self.__ollhash(ocols)
             if(bool(form)):
-                facemap = ["", "y", "y2", "y'"]
-                # self.__move(self.moveMapper(i, form))
-                self.__move(facemap[i])
-                self.__move(form)
+                if(self.optimize):
+                    self.__move(self.moveMapper(i, form))
+                else:
+                    facemap = ["", "y", "y2", "y'"]
+                    self.__move(facemap[i])
+                    self.__move(form)
                 break
     
     def __pllhash(self, values):
@@ -450,10 +462,12 @@ class Solver():
                 ocols.append(self.positionMapper(i, pos))
             form = self.__pllhash(ocols)
             if(bool(form)):
-                facemap = ["", "y", "y2", "y'"]
-                # self.__move(self.moveMapper(i, form))
-                self.__move(facemap[i])
-                self.__move(form)
+                if(self.optimize):
+                    self.__move(self.moveMapper(i, form))
+                else:
+                    facemap = ["", "y", "y2", "y'"]
+                    self.__move(facemap[i])
+                    self.__move(form)
                 break
         if(self.faces[0][0][1] == self.faces[1][1][1]):
             self.__move("U'")
