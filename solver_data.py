@@ -281,7 +281,7 @@ RunePatternMatcher = {
     ],
     # permutations of edges only
     "BBBOGOGRGROR": "R2URUR'U'R'U'R'UR'",
-    "BRBOGOGOGRBR": "M'2UM'2UM'U2M'2U2M'U2",
+    "BRBOGOGOGRBR": "M'2UM'2UM'U2M'2U2M'",
     "BBBOROGOGRGR": "RU'RURURU'R'U'R2",
     "OROGBGRORBGB": "M'2UM'2U2M'2UM'2",
     # permutations of corners only
@@ -289,11 +289,11 @@ RunePatternMatcher = {
     "BOGRGOGRBOBR": "x'RU'R'DRUR'D'RUR'DRU'R'D'x",
     "ROBOGOGRRBBG": "xR'2D2RUR'D2RU'Rx'",
     # swap one set of adjacent corners
-    "BROGOBOGGRBR": "RU'R'U'RURDR'U'RD'R'U2R'U'",
-    "ORRBOOGGGRBB": "R'UL'U2RU'R'U2RLU'",
+    "BROGOBOGGRBR": "RU'R'U'RURDR'U'RD'R'U2R'",
+    "ORRBOOGGGRBB": "R'UL'U2RU'R'U2RL",
     "OOGRBOGRRBGB": "RUR'U'R'FR2U'R'U'RUR'F'",
-    "GOBORGRGRBBO": "R'U2RU'2R'FRUR'U'R'F'R2U'",
-    "OOGRROGGRBBB": "RUR'F'RUR'U'R'FR2U'R'U'",
+    "GOBORGRGRBBO": "R'U2RU'2R'FRUR'U'R'F'R2",
+    "OOGRROGGRBBB": "RUR'F'RUR'U'R'FR2U'R'",
     "BGOGOBOBGRRR": "R'U'F'RUR'U'R'FR2U'R'U'RUR'UR",
     # swap one set of diagonal corners
     "RGOGOBORRBBG": "R'UR'U'yR'F'R2U'R'UR'FRF",
@@ -301,8 +301,8 @@ RunePatternMatcher = {
     "RBOGGBORRBOG": "FRU'R'U'RUR'F'RUR'U'R'FRF'",
     "ROOGBBORRBGG": "R'URU'R'F'U'FRUR'FR'F'RU'R",
     # G permutations (double cycles)
-    "GBRBOGRRBOGO": "R2UR'UR'U'RU'R2DU'R'URD'U",
-    "GRRBOGRGBOBO": "R2U'RU'RUR'UR2D'URU'R'DU'",
+    "GBRBOGRRBOGO": "R2UR'UR'U'RU'R2DU'R'URD'",
+    "GRRBOGRGBOBO": "R2U'RU'RUR'UR2D'URU'R'D",
     "OROGORBBGRGB": "F'U'FR2UwR'URU'RUw'R'2",
-    "GBRBGGROBORO": "D'RUR'U'DR2U'RU'R'UR'UR2U",
+    "GBRBGGROBORO": "D'RUR'U'DR2U'RU'R'UR'UR2",
 }

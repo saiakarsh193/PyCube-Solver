@@ -2,14 +2,24 @@ from cube import Cube
 from solver import Solver
 from helper import getScramble
 
-c = Cube()
-scramble = getScramble(10)
-print(scramble)
-c.doMoves(scramble)
+cb = Cube()
 
-s = Solver(c)
-s.solveCube(debug = True)
-moves = s.getMoves()
-print("Moves:")
-for mv in moves:
-    print(mv)
+# to manually scramble the cube uncomment the following
+# cb.doMoves("RUR'U'")
+
+# to auto scramble the cube
+cb.doMoves(getScramble(10))
+
+print(cb)
+
+solver = Solver(cb)
+solver.solveCube()
+
+# to get raw moves uncomment the following
+# moves = solver.getMoves()
+# for move in moves:
+#     print(move)
+
+# or for more detailed, decorated and condensed output
+moves = solver.getMoves(decorated=True)
+print(moves)
