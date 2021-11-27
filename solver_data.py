@@ -163,3 +163,18 @@ LyreLookUpSystem = {
         ["1b2", "R", "L", "yL'U'LUL'U'Ly'"],
     ]
 }
+
+ScythePatternMatcher = {
+    "target": [
+        (2, 0, 2), (2, 0, 1), (2, 0, 0),
+        (3, 0, 0), (5, 0, 0), (5, 0, 1), (5, 0, 2), (1, 0, 2),
+        (3, 0, 1), (5, 1, 0), (5, 1, 1), (5, 1, 2), (1, 0, 1),
+        (3, 0, 2), (5, 2, 0), (5, 2, 1), (5, 2, 2), (1, 0, 0),
+        (0, 0, 0), (0, 0, 1), (0, 0, 2)
+    ],
+    # knight moves
+    "yyx-xxxxy-xyyyx-xyxxx-xyy": "rU'r'U'rUr'y'R'UR",
+    "xyx-yxxyx-xyyyx-xxxxy-yyx": "rUr'RUR'U'rU'r'",
+    "xyy-yxxxx-xyyyx-xxxyx-yyx": "R'FRUR'F'Ry'RU'R'",
+    "xyx-xyxxy-xyyyx-yxxxx-xyy": "l'U'lL'U'LUl'Ul"
+}
