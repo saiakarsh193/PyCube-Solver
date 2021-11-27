@@ -1,6 +1,6 @@
 from cube import Cube
 from helper import rawCondense
-from solver_data import movedata, positionTransformData, whiteEdgePairs, whiteEdgeDirectMoves, LyreLookUpSystem, ScythePatternMatcher
+from solver_data import RunePatternMatcher, movedata, positionTransformData, whiteEdgePairs, whiteEdgeDirectMoves, LyreLookUpSystem, ScythePatternMatcher, RunePatternMatcher
 
 class Solver():
     def __init__(self, cube):
@@ -22,6 +22,8 @@ class Solver():
         self.__firstLayer()
         self.forms.append("--oll--")
         self.__oll()
+        self.forms.append("--pll--")
+        self.__pll()
         if(debug):
             print("After:")
             print(self.cube)
@@ -35,6 +37,7 @@ class Solver():
             baseCrossMoves = ""
             firstLayerMoves = ""
             ollMoves = ""
+            pllMoves = ""
             for form in self.forms:
                 if(form == "--align--"):
                     current = 0
@@ -44,6 +47,8 @@ class Solver():
                     current = 2
                 elif(form == "--oll--"):
                     current = 3
+                elif(form == "--pll--"):
+                    current = 4
                 else:
                     if(current == 0):
                         alignmentMoves += form
@@ -53,6 +58,8 @@ class Solver():
                         firstLayerMoves += form
                     elif(current == 3):
                         ollMoves += form
+                    elif(current == 4):
+                        pllMoves += form
             moves = ""
             if(bool(alignmentMoves)):
                 moves += "For alignment: " + rawCondense(alignmentMoves) + "\n"
@@ -62,12 +69,14 @@ class Solver():
                 moves += "For first layer: " + rawCondense(firstLayerMoves) + "\n"
             if(bool(ollMoves)):
                 moves += "For OLL: " + rawCondense(ollMoves) + "\n"
+            if(bool(pllMoves)):
+                moves += "For PLL: " + rawCondense(pllMoves) + "\n"
             moves = moves.strip()
             return moves
         else:
             moves = []
             for form in self.forms:
-                if(form != "--align--" and form != "--base--" and form != "--first--" and form != "--oll--"):
+                if(form != "--align--" and form != "--base--" and form != "--first--" and form != "--oll--" and form != "--pll--"):
                     moves.append(form)
             return moves
 
@@ -424,3 +433,31 @@ class Solver():
                 self.__move(facemap[i])
                 self.__move(form)
                 break
+    
+    def __pllhash(self, values):
+        for shuffle in RunePatternMatcher['shufflemap']:
+            ohash = ""
+            for val in values:
+                ohash += shuffle[val]
+            if(ohash in RunePatternMatcher):
+                return RunePatternMatcher[ohash]
+        return None
+    
+    def __pll(self):
+        for i in range(4):
+            ocols = []
+            for pos in RunePatternMatcher["target"]:
+                ocols.append(self.positionMapper(i, pos))
+            form = self.__pllhash(ocols)
+            if(bool(form)):
+                facemap = ["", "y", "y2", "y'"]
+                # self.__move(self.moveMapper(i, form))
+                self.__move(facemap[i])
+                self.__move(form)
+                break
+        if(self.faces[0][0][1] == self.faces[1][1][1]):
+            self.__move("U'")
+        elif(self.faces[0][0][1] == self.faces[2][1][1]):
+            self.__move("U2")
+        elif(self.faces[0][0][1] == self.faces[3][1][1]):
+            self.__move("U")

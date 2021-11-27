@@ -201,7 +201,7 @@ ScythePatternMatcher = {
     "yyx-xxxyx-yxyyx-xxyyx-yxx": "RDwL'Dw'R'ULwULw'",
     "yxx-xxyyx-yxyyx-xxxyx-yyx": "R'U'FURU'R'F'R",
     # W
-    "yxx-xxyyx-xyyxy-xyxxy-xyx": "RUR'URU'R'U'R'FRF",
+    "yxx-xxyyx-xyyxy-xyxxy-xyx": "RUR'URU'R'U'R'FRF'",
     "xxy-xyyxx-yxyyx-yxxyx-xyx": "L'U'LU'L'ULULF'L'F",
     # L
     "xxx-yxyxy-yxyyx-yxxxy-xyx": "RwUR'URU'R'URU'2Rw'",
@@ -244,4 +244,65 @@ ScythePatternMatcher = {
     "xyx-xyxyx-yxyyx-yxyxy-xxx": "R'2UR'B'RU'R'2ULwULw'",
     "xyx-xyxyx-xyyxy-xxyxx-yxy": "L'ULU'2L'U'y'L'ULUF",
     "xyx-xyxyx-xyyxy-yxyxy-xxx": "L2U'LBL'UL2U'Rw'U'Rw"
+}
+
+RunePatternMatcher = {
+    "shufflemap": [
+        {"G": "G", "O": "O", "B": "B", "R": "R"},
+        {"G": "G", "O": "O", "B": "R", "R": "B"},
+        {"G": "G", "O": "B", "B": "O", "R": "R"},
+        {"G": "G", "O": "B", "B": "R", "R": "O"},
+        {"G": "G", "O": "R", "B": "O", "R": "B"},
+        {"G": "G", "O": "R", "B": "B", "R": "O"},
+        {"G": "O", "O": "G", "B": "B", "R": "R"},
+        {"G": "O", "O": "G", "B": "R", "R": "B"},
+        {"G": "O", "O": "B", "B": "G", "R": "R"},
+        {"G": "O", "O": "B", "B": "R", "R": "G"},
+        {"G": "O", "O": "R", "B": "G", "R": "B"},
+        {"G": "O", "O": "R", "B": "B", "R": "G"},
+        {"G": "B", "O": "G", "B": "O", "R": "R"},
+        {"G": "B", "O": "G", "B": "R", "R": "O"},
+        {"G": "B", "O": "O", "B": "G", "R": "R"},
+        {"G": "B", "O": "O", "B": "R", "R": "G"},
+        {"G": "B", "O": "R", "B": "G", "R": "O"},
+        {"G": "B", "O": "R", "B": "O", "R": "G"},
+        {"G": "R", "O": "G", "B": "O", "R": "B"},
+        {"G": "R", "O": "G", "B": "B", "R": "O"},
+        {"G": "R", "O": "O", "B": "G", "R": "B"},
+        {"G": "R", "O": "O", "B": "B", "R": "G"},
+        {"G": "R", "O": "B", "B": "G", "R": "O"},
+        {"G": "R", "O": "B", "B": "O", "R": "G"}
+    ],
+    "target": [
+        (2, 0, 2), (2, 0, 1), (2, 0, 0),
+        (1, 0, 2), (1, 0, 1), (1, 0, 0),
+        (0, 0, 2), (0, 0, 1), (0, 0, 0),
+        (3, 0, 2), (3, 0, 1), (3, 0, 0)
+    ],
+    # permutations of edges only
+    "BBBOGOGRGROR": "R2URUR'U'R'U'R'UR'",
+    "BRBOGOGOGRBR": "M'2UM'2UM'U2M'2U2M'U2",
+    "BBBOROGOGRGR": "RU'RURURU'R'U'R2",
+    "OROGBGRORBGB": "M'2UM'2U2M'2UM'2",
+    # permutations of corners only
+    "GOGRGBORRBBO": "xR'UR'D2RU'R'D2R2x'",
+    "BOGRGOGRBOBR": "x'RU'R'DRUR'D'RUR'DRU'R'D'x",
+    "ROBOGOGRRBBG": "xR'2D2RUR'D2RU'Rx'",
+    # swap one set of adjacent corners
+    "BROGOBOGGRBR": "RU'R'U'RURDR'U'RD'R'U2R'U'",
+    "ORRBOOGGGRBB": "R'UL'U2RU'R'U2RLU'",
+    "OOGRBOGRRBGB": "RUR'U'R'FR2U'R'U'RUR'F'",
+    "GOBORGRGRBBO": "R'U2RU'2R'FRUR'U'R'F'R2U'",
+    "OOGRROGGRBBB": "RUR'F'RUR'U'R'FR2U'R'U'",
+    "BGOGOBOBGRRR": "R'U'F'RUR'U'R'FR2U'R'U'RUR'UR",
+    # swap one set of diagonal corners
+    "RGOGOBORRBBG": "R'UR'U'yR'F'R2U'R'UR'FRF",
+    "OORBBGRROGGB": "RUR'URUR'F'RUR'U'R'FR2U'R'U2RU'R'",
+    "RBOGGBORRBOG": "FRU'R'U'RUR'F'RUR'U'R'FRF'",
+    "ROOGBBORRBGG": "R'URU'R'F'U'FRUR'FR'F'RU'R",
+    # G permutations (double cycles)
+    "GBRBOGRRBOGO": "R2UR'UR'U'RU'R2DU'R'URD'U",
+    "GRRBOGRGBOBO": "R2U'RU'RUR'UR2D'URU'R'DU'",
+    "OROGORBBGRGB": "F'U'FR2UwR'URU'RUw'R'2",
+    "GBRBGGROBORO": "D'RUR'U'DR2U'RU'R'UR'UR2U",
 }
