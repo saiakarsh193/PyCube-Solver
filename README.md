@@ -43,7 +43,7 @@ print(moves)
 ```
   
 ### Results  
-The following tables shows the average number of moves (each taken over 10,000 solves) it takes to solve the cube for different parameters, each calculated for a different scramble length.  
+The following table shows the average number of moves (each taken over 10,000 solves) it takes to solve the cube for different parameters, each calculated for a different scramble length.  
 
 **Average number of moves:**  
 | scramble length | default (with both False) | with decorated=True | with optimize=True | with both True |
@@ -51,6 +51,10 @@ The following tables shows the average number of moves (each taken over 10,000 s
 |        5        |             41            |          38         |         35         |        32      |
 |        10       |             78            |          73         |         66         |        62      |
 |        20       |             87            |          82         |         73         |        69      |
+
+<p align="center">
+  <img src="https://i.postimg.cc/7Y8HzpdV/Figure-1.png" alt="Results plot" style="width: 500px;"/>
+</p>
 
 ### Notation  
 There are rules and methods that need to be followed in order to use the program. 
