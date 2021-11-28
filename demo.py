@@ -9,7 +9,6 @@ cb = Cube()
 
 # to auto scramble the cube
 scramble = getScramble(10)
-scramble = "FR'L2F2L2"
 print("Scramble:", scramble)
 cb.doMoves(scramble)
 

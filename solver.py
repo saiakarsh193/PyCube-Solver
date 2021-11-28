@@ -1,6 +1,7 @@
 from cube import Cube
 from helper import rawCondense
-from solver_data import RunePatternMatcher, movedata, positionTransformData, whiteEdgePairs, whiteEdgeDirectMoves, LyreLookUpSystem, ScythePatternMatcher, RunePatternMatcher
+from solver_data import RunePatternMatcher, movedata, move_pole_perspective, positionTransformData, whiteEdgePairs, whiteEdgeDirectMoves, LyreLookUpSystem, ScythePatternMatcher, RunePatternMatcher
+import sys
 
 class Solver():
     def __init__(self, cube):
@@ -15,20 +16,38 @@ class Solver():
         if(debug):
             print("Before:")
             print(self.cube)
-        self.forms.append("--align--")
-        self.__alignFaces()
-        self.forms.append("--base--")
-        self.__baseCross()
-        self.forms.append("--first--")
-        self.__firstLayer()
-        self.forms.append("--oll--")
-        self.__oll()
-        self.forms.append("--pll--")
-        self.__pll()
+        try:
+            self.forms.append("--align--")
+            self.__alignFaces()
+            self.forms.append("--base--")
+            self.__baseCross()
+            self.forms.append("--first--")
+            self.__firstLayer()
+            self.forms.append("--oll--")
+            self.__oll()
+            self.forms.append("--pll--")
+            self.__pll()
+        except Exception as exception:
+            print(exception.__class__.__name__ + " raised in the program (looks like something is broken...)")
+        self.checkComplete()
         if(debug):
             print("After:")
             print(self.cube)
         return True
+
+    def checkComplete(self):
+        isDone = True
+        for i in range(6):
+            tar = self.faces[i][0][0]
+            for row in range(3):
+                for col in range(3):
+                    if(tar != self.faces[i][row][col]):
+                        isDone = False
+        if(not isDone):
+            print("<<<ERROR>>>")
+            print("The program was not able to solve the cube")
+            print("Please contact me (saiakarsh193@gmail.com) and send the scramble used in order fix it")
+            sys.exit(0)
     
     def getMoves(self, decorated = False):
         # get the moves that have been applied till now
@@ -81,7 +100,7 @@ class Solver():
                     moves.append(form)
             return moves
 
-    def moveMapper(self, side, form):
+    def moveMapper(self, side, form, handle_x=False):
         # flexible moves-mapper from local perspective to global perspective
         moves = []
         for ch in form:
@@ -89,7 +108,20 @@ class Solver():
                 moves.append(ch)
             else:
                 moves[-1] += ch
+        onX = 0
         for i, item in enumerate(moves):
+            if(handle_x):
+                if(item == "x"):
+                    onX += 1
+                    moves[i] = ""
+                elif(item == "x'"):
+                    onX -= 1
+                    moves[i] = ""
+                elif(onX != 0):
+                    tmp = 0 if(onX == 1) else 4
+                    if moves[i] in move_pole_perspective:
+                        moves[i] = move_pole_perspective[moves[i]][tmp + side]
+                    continue
             if moves[i] in movedata:
                 moves[i] = movedata[moves[i]][side]
         return ''.join(moves)
@@ -439,7 +471,7 @@ class Solver():
             form = self.__ollhash(ocols)
             if(bool(form)):
                 if(self.optimize):
-                    self.__move(self.moveMapper(i, form))
+                    self.__move(self.moveMapper(i, form, handle_x=True))
                 else:
                     facemap = ["", "y", "y2", "y'"]
                     self.__move(facemap[i])
@@ -463,7 +495,7 @@ class Solver():
             form = self.__pllhash(ocols)
             if(bool(form)):
                 if(self.optimize):
-                    self.__move(self.moveMapper(i, form))
+                    self.__move(self.moveMapper(i, form, handle_x=True))
                 else:
                     facemap = ["", "y", "y2", "y'"]
                     self.__move(facemap[i])
