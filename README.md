@@ -17,25 +17,49 @@ You can create a cube object and move it by using the following code
 from cube import Cube
 cb = Cube()
 cb.doMoves("RUR'U'")
+# to automatically scramble the cube, use
+from helper import getScramble
+cb.doMoves(getScramble(10))
+
 print(cb)
 ```
-<br/>
-
+  
 The code for solving the cube can be found in `solver.py` and its helper data objects in `solver_data.py`.  
 
-If you want to use the solver (assuming you scrambled the cube duh), add the following code to the above code  
+If you want to use the solver, add the following code  
   
 ```python
 from solver import Solver
 solver = Solver(cb)
 solver.solveCube()
+# to optimize move count (by removing perspective move redundancy), use
+solver.solveCube(optimize=True)
+
 moves = solver.getMoves()
-for move in moves:
-    print(move)
 # or for more detailed, decorated and condensed output
 moves = solver.getMoves(decorated=True)
+
 print(moves)
 ```
+  
+### Results  
+The following tables shows the average number of moves (each taken over 10,000 solves) it takes to solve the cube for different parameters, each calculated for a different scramble length.  
+
+**Average number of moves for scramble length of 5**  
+| default (with both False) | with decorated=True | with optimize=True | with both True |
+|:-------------------------:|:-------------------:|:------------------:|:--------------:|
+|             41            |          38         |         35         |        32      |
+
+**Average number of moves for scramble length of 10**  
+| default (with both False) | with decorated=True | with optimize=True | with both True |
+|:-------------------------:|:-------------------:|:------------------:|:--------------:|
+|             78            |          73         |         66         |        62      |
+
+**Average number of moves for scramble length of 20**  
+| default (with both False) | with decorated=True | with optimize=True | with both True |
+|:-------------------------:|:-------------------:|:------------------:|:--------------:|
+|             87            |          82         |         73         |        69      |
+  
 
 ### Notation  
 There are rules and methods that need to be followed in order to use the program. 
