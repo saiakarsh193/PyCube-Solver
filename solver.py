@@ -1,15 +1,52 @@
 from cube import Cube
 from helper import rawCondense
 from solver_data import RunePatternMatcher, movedata, move_pole_perspective, positionTransformData, whiteEdgePairs, whiteEdgeDirectMoves, LyreLookUpSystem, ScythePatternMatcher, RunePatternMatcher
-import sys
 
 class Solver():
+    """
+    A Solver object that takes in a cube, solves it and gives output in the standard cube notation.
+
+    Parameters
+    ----------
+    cube : Cube object
+        The cube to be solved. This object will not be modified due to the solve, 
+        but rather a copy is stored in the solver.
+
+    Attributes
+    ----------
+    cube : Cube object
+        The internal copy of the Cube object that is given.
+    
+    Example
+    -------
+    >>> cb = Cube()
+    >>> cb.doMoves("RUR'U'")
+    >>> solver = Solver(cb)
+    >>> solver.solveCube(optimize=True)
+    >>> print(solver.getMoves())
+    URU'R'
+    >>> print(solver.getMoves(decorated=True))
+    For F2L: URU'R'
+    """
+    
     def __init__(self, cube):
         self.cube = Cube(faces = cube.getFaces())
-        self.faces = self.cube.cube
-        self.forms = []
+        self.__faces = self.cube.cube
+        self.__forms = []
 
     def solveCube(self, debug = False, optimize = False):
+        """
+        Solves the cube object (that is stored internally in the solver object).
+
+        Parameters
+        ----------
+        debug : bool, default=False
+            If set to True, it wil print the cube object before and after the solve.
+        optimize : bool, default=False
+            If set to True, it will reduce the number of moves it takes for a solve by removing perspective move redundancy.
+            Not recommended if you want to understand the nature of the solve.
+            The orientation is strictly fixed during the entire solve.
+        """
         # applying each part of the algorithm step by step
         # if debug is set to True, it prints the cube before and after applying the algorithm
         self.optimize = optimize
@@ -17,39 +54,37 @@ class Solver():
             print("Before:")
             print(self.cube)
         try:
-            self.forms.append("--align--")
+            self.__forms.append("--align--")
             self.__alignFaces()
-            self.forms.append("--base--")
+            self.__forms.append("--base--")
             self.__baseCross()
-            self.forms.append("--first--")
+            self.__forms.append("--first--")
             self.__firstLayer()
-            self.forms.append("--oll--")
+            self.__forms.append("--oll--")
             self.__oll()
-            self.forms.append("--pll--")
+            self.__forms.append("--pll--")
             self.__pll()
         except Exception as exception:
             print(exception.__class__.__name__ + " raised in the program (looks like something is broken...)")
-        self.checkComplete()
+        self.__checkComplete()
         if(debug):
             print("After:")
             print(self.cube)
-        return True
-
-    def checkComplete(self):
-        isDone = True
-        for i in range(6):
-            tar = self.faces[i][0][0]
-            for row in range(3):
-                for col in range(3):
-                    if(tar != self.faces[i][row][col]):
-                        isDone = False
-        if(not isDone):
-            print("<<<ERROR>>>")
-            print("The program was not able to solve the cube")
-            print("Please contact me (saiakarsh193@gmail.com) and send the scramble used in order fix it")
-            sys.exit(0)
     
     def getMoves(self, decorated = False):
+        """
+        Gives the moves taken for solving the cube.
+
+        Parameters
+        ----------
+        decorated : bool, default=False
+            If set to True, it gives a more detailed, decorated and condensed output.
+
+        Returns
+        -------
+        moves : string
+            Moves taken to solve the cube.
+        """
         # get the moves that have been applied till now
         if(decorated):
             current = -1
@@ -58,7 +93,7 @@ class Solver():
             firstLayerMoves = ""
             ollMoves = ""
             pllMoves = ""
-            for form in self.forms:
+            for form in self.__forms:
                 if(form == "--align--"):
                     current = 0
                 elif(form == "--base--"):
@@ -94,13 +129,28 @@ class Solver():
             moves = moves.strip()
             return moves
         else:
-            moves = []
-            for form in self.forms:
+            moves = ""
+            for form in self.__forms:
                 if(form != "--align--" and form != "--base--" and form != "--first--" and form != "--oll--" and form != "--pll--"):
-                    moves.append(form)
+                    moves += form + "\n"
+            moves = moves.strip()
             return moves
+    
+    def __checkComplete(self):
+        # checks the completion of the cube solve
+        isDone = True
+        for i in range(6):
+            tar = self.__faces[i][0][0]
+            for row in range(3):
+                for col in range(3):
+                    if(tar != self.__faces[i][row][col]):
+                        isDone = False
+        if(not isDone):
+            print("<<<ERROR>>>")
+            print("The program was not able to solve the cube")
+            print("Please contact me (saiakarsh193@gmail.com) and send the scramble used in order fix it")
 
-    def moveMapper(self, side, form, handle_x=False):
+    def __moveMapper(self, side, form, handle_x=False):
         # flexible moves-mapper from local perspective to global perspective
         moves = []
         for ch in form:
@@ -132,38 +182,38 @@ class Solver():
                 moves[i] = movedata[moves[i]][side]
         return ''.join(moves)
 
-    def positionMapper(self, target, side, row=None, col=None):
+    def __positionMapper(self, target, side, row=None, col=None):
         # position mapper that maps perspective local positions to global positions
         if(type(side) is tuple):
             row = side[1]
             col = side[2]
             side = side[0]
         aside, arow, acol = positionTransformData[target][side][row][col]
-        return self.faces[aside][arow][acol]
+        return self.__faces[aside][arow][acol]
 
     def __move(self, form):
         # applying moves to the cube and then storing it in a list
         if(bool(form)):
             self.cube.doMoves(form)
-            self.forms.append(form)
+            self.__forms.append(form)
 
     def __alignFaces(self):
         # aligns the cube such that green is facing the screen (outwards) and yellow is facing upwards
-        if(self.faces[1][1][1] == "G"):
+        if(self.__faces[1][1][1] == "G"):
             self.__move("y")
-        elif(self.faces[2][1][1] == "G"):
+        elif(self.__faces[2][1][1] == "G"):
             self.__move("y2")
-        elif(self.faces[3][1][1] == "G"):
+        elif(self.__faces[3][1][1] == "G"):
             self.__move("y'")
-        elif(self.faces[4][1][1] == "G"):
+        elif(self.__faces[4][1][1] == "G"):
             self.__move("x")
-        elif(self.faces[5][1][1] == "G"):
+        elif(self.__faces[5][1][1] == "G"):
             self.__move("x'")
-        if(self.faces[1][1][1] == "Y"):
+        if(self.__faces[1][1][1] == "Y"):
             self.__move("z'")
-        elif(self.faces[4][1][1] == "Y"):
+        elif(self.__faces[4][1][1] == "Y"):
             self.__move("z2")
-        elif(self.faces[3][1][1] == "Y"):
+        elif(self.__faces[3][1][1] == "Y"):
             self.__move("z")
 
     def __baseCross(self):
@@ -172,7 +222,7 @@ class Solver():
         t_slot = 0
         t_score = 0
         for i in range(4):
-            score = bool(self.positionMapper(i, 0, 2, 1) == "G" and self.positionMapper(i, 4, 0, 1) == "W") + bool(self.positionMapper(i, 1, 2, 1) == "O" and self.positionMapper(i, 4, 1, 2) == "W") + bool(self.positionMapper(i, 2, 2, 1) == "B" and self.positionMapper(i, 4, 2, 1) == "W") + bool(self.positionMapper(i, 3, 2, 1) == "R" and self.positionMapper(i, 4, 1, 0) == "W")
+            score = bool(self.__positionMapper(i, 0, 2, 1) == "G" and self.__positionMapper(i, 4, 0, 1) == "W") + bool(self.__positionMapper(i, 1, 2, 1) == "O" and self.__positionMapper(i, 4, 1, 2) == "W") + bool(self.__positionMapper(i, 2, 2, 1) == "B" and self.__positionMapper(i, 4, 2, 1) == "W") + bool(self.__positionMapper(i, 3, 2, 1) == "R" and self.__positionMapper(i, 4, 1, 0) == "W")
             if(score > t_score):
                 t_slot = i
                 t_score = score
@@ -196,10 +246,10 @@ class Solver():
         # find all the edges and calculate the moves
         for persp in range(4):
             for pos in whiteEdgePairs.keys():
-                if(self.positionMapper(persp, pos) == "W"):
+                if(self.__positionMapper(persp, pos) == "W"):
                     # find the other color on this edge
                     target_other = whiteEdgePairs[pos]
-                    target_other_color = self.positionMapper(persp, target_other)
+                    target_other_color = self.__positionMapper(persp, target_other)
                     # color to global slot
                     g_slot = slotToColorMap[target_other_color]
                     # global slot to perspective slot
@@ -207,7 +257,7 @@ class Solver():
                     # edge move for pos in perspective to perspective slot (as good as the global)
                     edgeMove = whiteEdgeDirectMoves[pos][p_slot]
                     # apply perspective edge move globally
-                    possible_moves.append(self.moveMapper(persp, edgeMove))
+                    possible_moves.append(self.__moveMapper(persp, edgeMove))
         if(len(possible_moves) > 0):
             # find the smallest move and apply it
             smallest_move = ""
@@ -218,18 +268,19 @@ class Solver():
         else:
             # if no edge is found, then the miss-oriented edges are on the white face. So we check wrt the global slot
             #  which edge is out of alignment and move it out of the white face
-            if(self.positionMapper(t_slot, 0, 2, 1) != "G"):
-                self.__move(self.moveMapper(t_slot, "F2"))
-            elif(self.positionMapper(t_slot, 1, 2, 1) != "O"):
-                self.__move(self.moveMapper(t_slot, "R2"))
-            elif(self.positionMapper(t_slot, 2, 2, 1) != "B"):
-                self.__move(self.moveMapper(t_slot, "B2"))
+            if(self.__positionMapper(t_slot, 0, 2, 1) != "G"):
+                self.__move(self.__moveMapper(t_slot, "F2"))
+            elif(self.__positionMapper(t_slot, 1, 2, 1) != "O"):
+                self.__move(self.__moveMapper(t_slot, "R2"))
+            elif(self.__positionMapper(t_slot, 2, 2, 1) != "B"):
+                self.__move(self.__moveMapper(t_slot, "B2"))
             else:
-                self.__move(self.moveMapper(t_slot, "L2"))
+                self.__move(self.__moveMapper(t_slot, "L2"))
         # repeatedly call this function till all the edges are oriented correctly
         self.__baseCross()
 
     def __getf2lMove(self, section, attrib_corner, attrib_edge, attrib_dist_sign=None, attrib_dist=None):
+        # searches the dictionary and retrieves the move if found
         for f2lmove in LyreLookUpSystem["f2ldb"]:
             if(f2lmove[0] == section):
                 if(section == "1a" and f2lmove[1] == attrib_corner and f2lmove[2] == attrib_edge and f2lmove[3] == attrib_dist_sign and f2lmove[4] == attrib_dist):
@@ -239,6 +290,7 @@ class Solver():
         return ""
 
     def __getCornerDetailBreakdown(self, c0, c1, c2):
+        # standard corner details breakdown for finding attributes
         if(c0 == "W"):
             cx = 0
             e0 = c1
@@ -263,27 +315,27 @@ class Solver():
 
     def __firstLayer(self):
         # conditions to check f2l completion
-        con1 = (self.faces[0][1][0] == self.faces[0][1][1] and self.faces[0][1][1] == self.faces[0][1][2] and 
-        self.faces[1][1][0] == self.faces[1][1][1] and self.faces[1][1][1] == self.faces[1][1][2] and
-        self.faces[2][1][0] == self.faces[2][1][1] and self.faces[2][1][1] == self.faces[2][1][2] and
-        self.faces[3][1][0] == self.faces[3][1][1] and self.faces[3][1][1] == self.faces[3][1][2])
-        con2 = (self.faces[0][2][0] == self.faces[0][2][1] and self.faces[0][2][1] == self.faces[0][2][2] and 
-        self.faces[1][2][0] == self.faces[1][2][1] and self.faces[1][2][1] == self.faces[1][2][2] and
-        self.faces[2][2][0] == self.faces[2][2][1] and self.faces[2][2][1] == self.faces[2][2][2] and
-        self.faces[3][2][0] == self.faces[3][2][1] and self.faces[3][2][1] == self.faces[3][2][2])
-        con3 = (self.faces[0][1][1] == self.faces[0][2][1] and self.faces[1][1][1] == self.faces[1][2][1] and
-        self.faces[2][1][1] == self.faces[2][2][1] and self.faces[3][1][1] == self.faces[3][2][1])
-        con4 = (self.faces[4][1][1] == self.faces[4][0][0] and self.faces[4][1][1] == self.faces[4][0][2] and
-        self.faces[4][1][1] == self.faces[4][2][0] and self.faces[4][1][1] == self.faces[4][2][2])
+        con1 = (self.__faces[0][1][0] == self.__faces[0][1][1] and self.__faces[0][1][1] == self.__faces[0][1][2] and 
+        self.__faces[1][1][0] == self.__faces[1][1][1] and self.__faces[1][1][1] == self.__faces[1][1][2] and
+        self.__faces[2][1][0] == self.__faces[2][1][1] and self.__faces[2][1][1] == self.__faces[2][1][2] and
+        self.__faces[3][1][0] == self.__faces[3][1][1] and self.__faces[3][1][1] == self.__faces[3][1][2])
+        con2 = (self.__faces[0][2][0] == self.__faces[0][2][1] and self.__faces[0][2][1] == self.__faces[0][2][2] and 
+        self.__faces[1][2][0] == self.__faces[1][2][1] and self.__faces[1][2][1] == self.__faces[1][2][2] and
+        self.__faces[2][2][0] == self.__faces[2][2][1] and self.__faces[2][2][1] == self.__faces[2][2][2] and
+        self.__faces[3][2][0] == self.__faces[3][2][1] and self.__faces[3][2][1] == self.__faces[3][2][2])
+        con3 = (self.__faces[0][1][1] == self.__faces[0][2][1] and self.__faces[1][1][1] == self.__faces[1][2][1] and
+        self.__faces[2][1][1] == self.__faces[2][2][1] and self.__faces[3][1][1] == self.__faces[3][2][1])
+        con4 = (self.__faces[4][1][1] == self.__faces[4][0][0] and self.__faces[4][1][1] == self.__faces[4][0][2] and
+        self.__faces[4][1][1] == self.__faces[4][2][0] and self.__faces[4][1][1] == self.__faces[4][2][2])
         if(con1 and con2 and con3 and con4):
             return
         found = False
         # f2l 1a
         # trying to find a corner-edge pair
         for corner in LyreLookUpSystem["corners"]:
-            c0 = self.positionMapper(0, corner[0])
-            c1 = self.positionMapper(0, corner[1])
-            c2 = self.positionMapper(0, corner[2])
+            c0 = self.__positionMapper(0, corner[0])
+            c1 = self.__positionMapper(0, corner[1])
+            c2 = self.__positionMapper(0, corner[2])
             if(c0 == "W" or c1 == "W" or c2 == "W"):
                 cx, e0, e1, face2 = self.__getCornerDetailBreakdown(c0, c1, c2)
                 # orienting the corner and front face properly
@@ -293,8 +345,8 @@ class Solver():
                 orient_move = [["", ""], ["y", "y'"], ["y2", "y2"], ["y'", "y"]]
                 # top row edges
                 for edge in LyreLookUpSystem["edges"]:
-                    te0 = self.positionMapper(0, edge[0])
-                    te1 = self.positionMapper(0, edge[1])
+                    te0 = self.__positionMapper(0, edge[0])
+                    te1 = self.__positionMapper(0, edge[1])
                     if((te0 == e0 and te1 == e1) or (te0 == e1 and te1 == e0)):
                         # found a corner-edge pair
                         # attrib_corner: U means up, L means left, R means right
@@ -338,7 +390,7 @@ class Solver():
                             else:
                                 attrib_dist_sign = 0
                         if(self.optimize):
-                            self.__move(self.moveMapper(face2, diff_to_move[diff] + self.__getf2lMove("1a", attrib_corner, attrib_edge, attrib_dist_sign, attrib_dist)))
+                            self.__move(self.__moveMapper(face2, diff_to_move[diff] + self.__getf2lMove("1a", attrib_corner, attrib_edge, attrib_dist_sign, attrib_dist)))
                         else:
                             self.__move(diff_to_move[diff])
                             self.__move(orient_move[face2][0])
@@ -352,9 +404,9 @@ class Solver():
         if(not found):
             # trying to find a corner-edge pair
             for corner in LyreLookUpSystem["corners"]:
-                c0 = self.positionMapper(0, corner[0])
-                c1 = self.positionMapper(0, corner[1])
-                c2 = self.positionMapper(0, corner[2])
+                c0 = self.__positionMapper(0, corner[0])
+                c1 = self.__positionMapper(0, corner[1])
+                c2 = self.__positionMapper(0, corner[2])
                 if(c0 == "W" or c1 == "W" or c2 == "W"):
                     cx, e0, e1, face2 = self.__getCornerDetailBreakdown(c0, c1, c2)
                     # orienting the corner and front face properly
@@ -364,13 +416,13 @@ class Solver():
                     orient_move = [["", ""], ["y", "y'"], ["y2", "y2"], ["y'", "y"]]
                     # middle row edges
                     for edge in LyreLookUpSystem["edges-mid"]:
-                        te0 = self.positionMapper(0, edge[0])
-                        te1 = self.positionMapper(0, edge[1])
-                        if(((te0 == e0 and te1 == e1) or (te0 == e1 and te1 == e0)) and ((te0 == self.faces[edge[0][0]][1][1] and te1 == self.faces[edge[1][0]][1][1]) or (te0 == self.faces[edge[1][0]][1][1] and te1 == self.faces[edge[0][0]][1][1]))):
+                        te0 = self.__positionMapper(0, edge[0])
+                        te1 = self.__positionMapper(0, edge[1])
+                        if(((te0 == e0 and te1 == e1) or (te0 == e1 and te1 == e0)) and ((te0 == self.__faces[edge[0][0]][1][1] and te1 == self.__faces[edge[1][0]][1][1]) or (te0 == self.__faces[edge[1][0]][1][1] and te1 == self.__faces[edge[0][0]][1][1]))):
                             attrib_corner = "U" if(corner[cx][0] == 5) else ("L" if corner[cx][2] == 0 else "R")
-                            attrib_edge = "E" if (te0 == self.faces[edge[0][0]][1][1] and te1 == self.faces[edge[1][0]][1][1]) else "X"
+                            attrib_edge = "E" if (te0 == self.__faces[edge[0][0]][1][1] and te1 == self.__faces[edge[1][0]][1][1]) else "X"
                             if(self.optimize):
-                                self.__move(self.moveMapper(face2, diff_to_move[diff] + self.__getf2lMove("1b1", attrib_corner, attrib_edge)))
+                                self.__move(self.__moveMapper(face2, diff_to_move[diff] + self.__getf2lMove("1b1", attrib_corner, attrib_edge)))
                             else:
                                 self.__move(diff_to_move[diff])
                                 self.__move(orient_move[face2][0])
@@ -384,19 +436,19 @@ class Solver():
         if(not found):
             # trying to find a corner-edge pair
             for corner in LyreLookUpSystem["corners-down"]:
-                c0 = self.positionMapper(0, corner[0])
-                c1 = self.positionMapper(0, corner[1])
-                c2 = self.positionMapper(0, corner[2])
-                if(self.faces[corner[0][0]][1][1] in [c0, c1, c2] and self.faces[corner[1][0]][1][1] in [c0, c1, c2] and self.faces[corner[2][0]][1][1] in [c0, c1, c2]):
+                c0 = self.__positionMapper(0, corner[0])
+                c1 = self.__positionMapper(0, corner[1])
+                c2 = self.__positionMapper(0, corner[2])
+                if(self.__faces[corner[0][0]][1][1] in [c0, c1, c2] and self.__faces[corner[1][0]][1][1] in [c0, c1, c2] and self.__faces[corner[2][0]][1][1] in [c0, c1, c2]):
                     cx, e0, e1, face2 = self.__getCornerDetailBreakdown(c0, c1, c2)
-                    if(self.faces[face2][1][1] == self.faces[face2][1][2] and self.faces[(face2 + 1) % 4][1][0] == self.faces[(face2 + 1) % 4][1][1]):
+                    if(self.__faces[face2][1][1] == self.__faces[face2][1][2] and self.__faces[(face2 + 1) % 4][1][0] == self.__faces[(face2 + 1) % 4][1][1]):
                         continue
                     # orienting the corner and front face properly
                     orient_move = [["", ""], ["y", "y'"], ["y2", "y2"], ["y'", "y"]]
                     # # top row edges
                     for edge in LyreLookUpSystem["edges"]:
-                        te0 = self.positionMapper(0, edge[0])
-                        te1 = self.positionMapper(0, edge[1])
+                        te0 = self.__positionMapper(0, edge[0])
+                        te1 = self.__positionMapper(0, edge[1])
                         if((te0 == e0 and te1 == e1) or (te0 == e1 and te1 == e0)):
                             down_color, down_face = (te0, edge[0][0]) if(edge[0][0] != 5) else (te1, edge[1][0])
                             color_to_face2 = {"G": 0, "O": 1, "B": 2, "R": 3}
@@ -406,7 +458,7 @@ class Solver():
                             attrib_corner = "D" if(corner[cx][0] == 4) else ("L" if corner[cx][2] == 0 else "R")
                             attrib_edge = "L" if(rl_map_face2[face2][0] == color_to_face2[down_color]) else "R"
                             if(self.optimize):
-                                self.__move(self.moveMapper(face2, diff_to_move[diff] + self.__getf2lMove("1b2", attrib_corner, attrib_edge)))
+                                self.__move(self.__moveMapper(face2, diff_to_move[diff] + self.__getf2lMove("1b2", attrib_corner, attrib_edge)))
                             else:
                                 self.__move(orient_move[face2][0])
                                 self.__move(diff_to_move[diff])
@@ -422,41 +474,42 @@ class Solver():
             # so we move the unsolved corners using a score system, which rates the shorter moves and moves which form pairs with higher score
             fmoves = []
             for i in range(4):
-                con1 = self.positionMapper(i, 0, 1, 2) == self.positionMapper(i, 0, 2, 2) and self.positionMapper(i, 1, 1, 0) == self.positionMapper(i, 1, 2, 0) and self.positionMapper(i, 4, 0, 2) == "W"
-                con2 = self.positionMapper(i, 0, 1, 1) == self.positionMapper(i, 0, 1, 2) and self.positionMapper(i, 1, 1, 0) == self.positionMapper(i, 1, 1, 1)
-                corvd = [self.positionMapper(i, 0, 2, 2), self.positionMapper(i, 1, 2, 0), self.positionMapper(i, 4, 0, 2)]
-                corvu = [self.positionMapper(i, 0, 0, 2), self.positionMapper(i, 1, 0, 0), self.positionMapper(i, 5, 2, 2)]
+                con1 = self.__positionMapper(i, 0, 1, 2) == self.__positionMapper(i, 0, 2, 2) and self.__positionMapper(i, 1, 1, 0) == self.__positionMapper(i, 1, 2, 0) and self.__positionMapper(i, 4, 0, 2) == "W"
+                con2 = self.__positionMapper(i, 0, 1, 1) == self.__positionMapper(i, 0, 1, 2) and self.__positionMapper(i, 1, 1, 0) == self.__positionMapper(i, 1, 1, 1)
+                corvd = [self.__positionMapper(i, 0, 2, 2), self.__positionMapper(i, 1, 2, 0), self.__positionMapper(i, 4, 0, 2)]
+                corvu = [self.__positionMapper(i, 0, 0, 2), self.__positionMapper(i, 1, 0, 0), self.__positionMapper(i, 5, 2, 2)]
                 if(con1 and con2):
                     continue
                 if(con1 and not con2):
-                    fmoves.append([10, self.moveMapper(i, "RUR'")])
+                    fmoves.append([10, self.__moveMapper(i, "RUR'")])
                 if("W" in corvd):
-                    if(self.positionMapper(i, 0, 0, 1) in corvd and self.positionMapper(i, 5, 2, 1) in corvd):
-                        fmoves.append([6, self.moveMapper(i, "URU'R'")])
-                    fmoves.append([4, self.moveMapper(i, "RU'R'")])
+                    if(self.__positionMapper(i, 0, 0, 1) in corvd and self.__positionMapper(i, 5, 2, 1) in corvd):
+                        fmoves.append([6, self.__moveMapper(i, "URU'R'")])
+                    fmoves.append([4, self.__moveMapper(i, "RU'R'")])
                 if("W" in corvu):
-                    if(self.positionMapper(i, 0, 1, 2) in corvu and self.positionMapper(i, 1, 1, 0) in corvu):
-                        if(self.positionMapper(i, 0, 0, 2) == "W"):
-                            if(self.positionMapper(i, 5, 2, 2) == self.positionMapper(i, 0, 1, 2)):
-                                fmoves.append([8, self.moveMapper(i, "U'RU'R'")])
+                    if(self.__positionMapper(i, 0, 1, 2) in corvu and self.__positionMapper(i, 1, 1, 0) in corvu):
+                        if(self.__positionMapper(i, 0, 0, 2) == "W"):
+                            if(self.__positionMapper(i, 5, 2, 2) == self.__positionMapper(i, 0, 1, 2)):
+                                fmoves.append([8, self.__moveMapper(i, "U'RU'R'")])
                             else:
-                                fmoves.append([8, self.moveMapper(i, "U2RUR'")])
-                        elif(self.positionMapper(i, 1, 0, 0) == "W"):
-                            if(self.positionMapper(i, 5, 2, 2) == self.positionMapper(i, 0, 1, 2)):
-                                fmoves.append([8, self.moveMapper((i + 1) % 4, "U2L'U'L")])
+                                fmoves.append([8, self.__moveMapper(i, "U2RUR'")])
+                        elif(self.__positionMapper(i, 1, 0, 0) == "W"):
+                            if(self.__positionMapper(i, 5, 2, 2) == self.__positionMapper(i, 0, 1, 2)):
+                                fmoves.append([8, self.__moveMapper((i + 1) % 4, "U2L'U'L")])
                             else:
-                                fmoves.append([8, self.moveMapper((i + 1) % 4, "UL'UL")])
+                                fmoves.append([8, self.__moveMapper((i + 1) % 4, "UL'UL")])
                         else:
-                            if(self.positionMapper(i, 0, 0, 2) == self.positionMapper(i, 0, 1, 2)):
-                                fmoves.append([9, self.moveMapper(i, "RU'R'")])
+                            if(self.__positionMapper(i, 0, 0, 2) == self.__positionMapper(i, 0, 1, 2)):
+                                fmoves.append([9, self.__moveMapper(i, "RU'R'")])
                             else:
-                                fmoves.append([4, self.moveMapper(i, "U'RUR'")])
-                fmoves.append([1, self.moveMapper(i, "RU'R'")])
+                                fmoves.append([4, self.__moveMapper(i, "U'RUR'")])
+                fmoves.append([1, self.__moveMapper(i, "RU'R'")])
             fmoves = sorted(fmoves, key=lambda x: -x[0])
             self.__move(fmoves[0][1])
         self.__firstLayer()
 
     def __ollhash(self, values):
+        # hashes and searches the dictionary and retrieves the move if found
         shash = ""
         for val in values:
             if(val == "Y"):
@@ -470,14 +523,15 @@ class Solver():
             return None
 
     def __oll(self):
+        # performs orientation of last layer
         for i in range(4):
             ocols = []
             for pos in ScythePatternMatcher["target"]:
-                ocols.append(self.positionMapper(i, pos))
+                ocols.append(self.__positionMapper(i, pos))
             form = self.__ollhash(ocols)
             if(bool(form)):
                 if(self.optimize):
-                    self.__move(self.moveMapper(i, form, handle_x=True))
+                    self.__move(self.__moveMapper(i, form, handle_x=True))
                 else:
                     facemap = ["", "y", "y2", "y'"]
                     self.__move(facemap[i])
@@ -485,6 +539,7 @@ class Solver():
                 break
     
     def __pllhash(self, values):
+        # hashes and searches the dictionary and retrieves the move if found
         for shuffle in RunePatternMatcher['shufflemap']:
             ohash = ""
             for val in values:
@@ -494,22 +549,23 @@ class Solver():
         return None
     
     def __pll(self):
+        # performs permutation of last layer
         for i in range(4):
             ocols = []
             for pos in RunePatternMatcher["target"]:
-                ocols.append(self.positionMapper(i, pos))
+                ocols.append(self.__positionMapper(i, pos))
             form = self.__pllhash(ocols)
             if(bool(form)):
                 if(self.optimize):
-                    self.__move(self.moveMapper(i, form, handle_x=True))
+                    self.__move(self.__moveMapper(i, form, handle_x=True))
                 else:
                     facemap = ["", "y", "y2", "y'"]
                     self.__move(facemap[i])
                     self.__move(form)
                 break
-        if(self.faces[0][0][1] == self.faces[1][1][1]):
+        if(self.__faces[0][0][1] == self.__faces[1][1][1]):
             self.__move("U'")
-        elif(self.faces[0][0][1] == self.faces[2][1][1]):
+        elif(self.__faces[0][0][1] == self.__faces[2][1][1]):
             self.__move("U2")
-        elif(self.faces[0][0][1] == self.faces[3][1][1]):
+        elif(self.__faces[0][0][1] == self.__faces[3][1][1]):
             self.__move("U")
