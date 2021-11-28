@@ -122,6 +122,12 @@ class Solver():
                     if moves[i] in move_pole_perspective:
                         moves[i] = move_pole_perspective[moves[i]][tmp + side]
                     continue
+            if(self.optimize and item[0] == "y"):
+                if(item == "y"):
+                    side = (side + 1) % 4
+                else:
+                    side = (side - 1) % 4
+                moves[i] = ""
             if moves[i] in movedata:
                 moves[i] = movedata[moves[i]][side]
         return ''.join(moves)
