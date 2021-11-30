@@ -136,6 +136,24 @@ class Solver():
             moves = moves.strip()
             return moves
     
+    def isSolved(self):
+        """
+        Checks if the cube is solved or not.
+
+        Returns
+        -------
+        is_solved : bool
+            If solved, it is True otherwise False.
+        """
+        is_solved = True
+        for i in range(6):
+            tar = self.__faces[i][0][0]
+            for row in range(3):
+                for col in range(3):
+                    if(tar != self.__faces[i][row][col]):
+                        is_solved = False
+        return is_solved
+    
     def __checkComplete(self):
         # checks the completion of the cube solve
         isDone = True
