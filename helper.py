@@ -268,6 +268,10 @@ def rawCondense(form):
                 temp.pop(i + 1)
                 isChange = True
                 break
+            elif(temp[i][1] % 4 == 0):
+                temp.pop(i)
+                isChange = True
+                break
         if(not isChange):
             break
     # limit count to 2 and inverse moves for 3
