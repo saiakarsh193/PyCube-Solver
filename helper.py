@@ -236,13 +236,13 @@ def rawCondense(form):
     # string to 2d count array
     temp = []
     for i, item in enumerate(form):
-        if(form[i].isalpha() and not form[i] == 'P'):
+        if(form[i].isalpha() and not form[i] == 'P' and not form[i] == 'w'):
             temp.append([form[i], ""])
         else:
             if(form[i].isdigit()):
                 temp[-1][1] += form[i]
             else:
-                temp[-1][0] += '\''
+                temp[-1][0] += form[i]
     # int() of count
     for i, item in enumerate(temp):
         if(temp[i][1] == ""):
@@ -278,10 +278,10 @@ def rawCondense(form):
     for i, item in enumerate(temp):
         temp[i][1] = ((temp[i][1] - 1) % 4) + 1
         if(temp[i][1] == 3):
-            if(len(temp[i][0]) == 2):
-                temp[i][0] = temp[i][0][0]
+            if(temp[i][0][-1] == "\'"):
+                temp[i][0] = temp[i][0][:-1]
             else:
-                temp[i][0] += '\''
+                temp[i][0] += "\'"
             temp[i][1] = 1
         elif(temp[i][1] == 4):
             temp[i][1] = 0
@@ -298,7 +298,16 @@ def isPrimePair(s1, s2):
     """
     Checks if the two moves are primes of each other assuming both are simple moves.
     """
-    return bool(len(s1) != len(s2) and s1[0] == s2[0])
+    if(len(s1) >= len(s2)):
+        a = s1
+        b = s2
+    else:
+        a = s2
+        b = s1
+    if(len(a) - len(b) == 1):
+        if(a[:len(b)] == b and a[-1] == "\'"):
+            return True
+    return False
 
 def parseFormula(form, condense = True):
     """
